@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: raizes-nordeste
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/testdb
+    username: testuser
+    password: testpass

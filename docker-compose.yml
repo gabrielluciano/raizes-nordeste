@@ -1,0 +1,17 @@
+name: raizes-nordeste
+
+services:
+  postgres:
+    image: postgres:18.4
+    restart: always
+    environment:
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpass
+      POSTGRES_DB: testdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql
+
+volumes:
+  db_data:
