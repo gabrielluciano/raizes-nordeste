@@ -10,6 +10,7 @@ import lombok.Getter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Getter
 public class Cliente {
 
     private static final int IDADE_MINIMA_CLIENTE = 14;
@@ -21,13 +22,9 @@ public class Cliente {
     private Telefone telefone;
     private String endereco;
     private LocalDate dataNascimento;
-    @Getter
     private long saldoPontos;
-    @Getter
     private boolean aceiteTermos;
-    @Getter
     private LocalDateTime dataAceiteTermos;
-    @Getter
     private String versaoTermos;
     private LocalDateTime dataCadastro;
 
@@ -62,6 +59,32 @@ public class Cliente {
         this.dataAceiteTermos = dataAceiteTermos;
         this.versaoTermos = versaoTermos;
         this.dataCadastro = dataCadastro;
+    }
+
+    public static Cliente criar(
+            Id contaId,
+            String nome,
+            String cpf,
+            String telefone,
+            String endereco,
+            LocalDate dataNascimento,
+            String versaoTermos
+    ) {
+        LocalDateTime now = LocalDateTime.now();
+        return new Cliente(
+                Id.aleatorio(),
+                contaId,
+                nome,
+                new CPF(cpf),
+                new Telefone(telefone),
+                endereco,
+                dataNascimento,
+                0,
+                true,
+                now,
+                versaoTermos,
+                now
+        );
     }
 
     private boolean dataNascimentoValida(LocalDate dataNascimento) {

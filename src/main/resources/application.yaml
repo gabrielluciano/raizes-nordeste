@@ -6,3 +6,12 @@ spring:
     url: jdbc:postgresql://localhost:5432/testdb
     username: testuser
     password: testpass
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+app:
+  jwt:
+    issuer: raizes-nordeste
+    secret: ${JWT_SECRET:segredo-forte-de-pelo-menos-32-bytes}

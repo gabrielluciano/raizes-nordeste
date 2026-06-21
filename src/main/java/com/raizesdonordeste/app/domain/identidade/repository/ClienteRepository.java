@@ -9,6 +9,10 @@ import java.util.Optional;
 public interface ClienteRepository {
 
     Optional<Cliente> obterPorId(Id id);
+
     Optional<Cliente> obterPorCpf(CPF cpf);
+
+    void inserir(Cliente cliente);
+
     void atualizar(Cliente cliente);
 }

@@ -4,9 +4,11 @@ import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.comum.model.Slug;
 import com.raizesdonordeste.app.domain.comum.util.Guarda;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.util.Set;
 
+@Getter
 public class Base {
 
     private final Id id;
