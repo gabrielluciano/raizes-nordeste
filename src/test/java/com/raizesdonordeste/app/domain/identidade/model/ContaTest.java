@@ -40,15 +40,6 @@ class ContaTest {
     }
 
     @Test
-    void deveLancarExcecao_QuandoConstruidoComBaseIdNull() {
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() ->
-                        criarConta()
-                                .baseId(null)
-                                .build())
-                .withMessage("baseId não pode ser nulo.");
-    }
-
-    @Test
     void deveLancarExcecao_QuandoConstruidoComEmailNull() {
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() ->
                         criarConta()
@@ -163,7 +154,6 @@ class ContaTest {
     private Conta.ContaBuilder criarConta() {
         return Conta.builder()
                 .id(Id.aleatorio())
-                .baseId(Id.aleatorio())
                 .email(new Email("email@example.com"))
                 .senhaHash("hash")
                 .status(StatusConta.ATIVA)

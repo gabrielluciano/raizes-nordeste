@@ -1,6 +1,6 @@
 package com.raizesdonordeste.app.infra.mapper;
 
-import com.raizesdonordeste.app.api.dto.CadastroRequest;
+import com.raizesdonordeste.app.api.dto.CadastroClienteRequest;
 import com.raizesdonordeste.app.domain.identidade.model.CadastrarClienteComando;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -10,5 +10,5 @@ public interface CadastrarClienteComandoMapper {
 
     CadastrarClienteComandoMapper INSTANCE = Mappers.getMapper(CadastrarClienteComandoMapper.class);
 
-    CadastrarClienteComando toComando(CadastroRequest cadastro);
+    CadastrarClienteComando toComando(CadastroClienteRequest cadastro);
 }

@@ -10,7 +10,7 @@ import org.hibernate.validator.constraints.br.CPF;
 import java.time.LocalDate;
 
 @Getter
-public class CadastroRequest {
+public class CadastroClienteRequest {
 
     @NotBlank
     private String nome;

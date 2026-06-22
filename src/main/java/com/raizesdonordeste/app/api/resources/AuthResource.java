@@ -1,10 +1,10 @@
 package com.raizesdonordeste.app.api.resources;
 
-import com.raizesdonordeste.app.api.dto.CadastroRequest;
+import com.raizesdonordeste.app.api.dto.CadastroClienteRequest;
 import com.raizesdonordeste.app.api.dto.CadastroResponse;
 import com.raizesdonordeste.app.api.dto.LoginRequest;
 import com.raizesdonordeste.app.api.dto.LoginResponse;
-import com.raizesdonordeste.app.application.usecases.CadastroUseCase;
+import com.raizesdonordeste.app.application.usecases.CadastroClienteUseCase;
 import com.raizesdonordeste.app.application.usecases.LoginUseCase;
 import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.identidade.model.CadastrarClienteComando;
@@ -20,34 +20,28 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.raizesdonordeste.app.api.resources.AuthResource.PATH;
-
 @RestController
-@RequestMapping(PATH)
+@RequestMapping("auth")
 @RequiredArgsConstructor
 public class AuthResource {
-
-    static final String PATH = "/auth";
-    static final String SIGNUP = "/signup";
-    static final String LOGIN = "/login";
 
     private static final String TOKEN_TYPE = "Bearer";
 
     private final CadastrarClienteComandoMapper cadastrarClienteComandoMapper;
     private final LoginComandoMapper loginComandoMapper;
-    private final CadastroUseCase cadastroUseCase;
+    private final CadastroClienteUseCase cadastroClienteUseCase;
     private final LoginUseCase loginUseCase;
 
-    @PostMapping(SIGNUP)
-    public ResponseEntity<CadastroResponse> cadastrar(@RequestBody CadastroRequest request) {
+    @PostMapping("signup")
+    public ResponseEntity<CadastroResponse> cadastrar(@RequestBody CadastroClienteRequest request) {
         CadastrarClienteComando comando = cadastrarClienteComandoMapper.toComando(request);
-        Id id = cadastroUseCase.executar(comando);
+        Id id = cadastroClienteUseCase.executar(comando);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new CadastroResponse(id.toString()));
     }
 
-    @PostMapping(LOGIN)
+    @PostMapping("login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         LoginComando comando = loginComandoMapper.toComando(request);
         TokensAutenticacao tokens = loginUseCase.executar(comando);

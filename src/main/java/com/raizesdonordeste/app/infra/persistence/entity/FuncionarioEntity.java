@@ -1,6 +1,5 @@
 package com.raizesdonordeste.app.infra.persistence.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -9,24 +8,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = BaseEntity.TABLE_NAME, schema = BaseEntity.SCHEMA)
+@Table(name = FuncionarioEntity.TABLE_NAME, schema = FuncionarioEntity.SCHEMA)
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BaseEntity {
+public class FuncionarioEntity {
 
     public static final String SCHEMA = "raizesnordeste";
-    public static final String TABLE_NAME = "bases";
+    public static final String TABLE_NAME = "funcionarios";
 
     @Id
     private UUID id;
+    private UUID contaId;
+    private UUID unidadeId;
     private String nome;
-    private String slug;
-
-    @Column(columnDefinition = "text[]")
-    private String[] rolesPermitidas;
+    private String telefone;
+    private String endereco;
+    private LocalDate dataNascimento;
 }

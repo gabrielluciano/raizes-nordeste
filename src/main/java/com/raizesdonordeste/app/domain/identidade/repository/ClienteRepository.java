@@ -10,6 +10,8 @@ public interface ClienteRepository {
 
     Optional<Cliente> obterPorId(Id id);
 
+    Optional<Cliente> obterPorContaId(Id contaId);
+
     Optional<Cliente> obterPorCpf(CPF cpf);
 
     void inserir(Cliente cliente);

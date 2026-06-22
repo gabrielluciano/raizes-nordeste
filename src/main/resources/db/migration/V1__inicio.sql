@@ -1,17 +1,8 @@
 CREATE SCHEMA IF NOT EXISTS raizesnordeste;
 
-CREATE TABLE raizesnordeste.bases
-(
-    id               UUID PRIMARY KEY,
-    nome             VARCHAR(100) NOT NULL,
-    slug             VARCHAR(100) NOT NULL UNIQUE,
-    roles_permitidas TEXT[]       NOT NULL
-);
-
 CREATE TABLE raizesnordeste.contas
 (
     id         UUID PRIMARY KEY,
-    base_id    UUID         NOT NULL REFERENCES raizesnordeste.bases (id),
     email      VARCHAR(255) NOT NULL UNIQUE,
     senha_hash VARCHAR(255) NOT NULL,
     status     VARCHAR(20)  NOT NULL,
@@ -32,6 +23,27 @@ CREATE TABLE raizesnordeste.clientes
     data_aceite_termos TIMESTAMP,
     versao_termos      VARCHAR(20),
     data_cadastro      TIMESTAMP    NOT NULL
+);
+
+CREATE TABLE raizesnordeste.unidades
+(
+    id       UUID PRIMARY KEY,
+    nome     VARCHAR(150) NOT NULL,
+    endereco TEXT         NOT NULL,
+    hora_de  SMALLINT     NOT NULL,
+    hora_ate SMALLINT     NOT NULL,
+    ativa    BOOLEAN      NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE raizesnordeste.funcionarios
+(
+    id              UUID PRIMARY KEY,
+    conta_id        UUID         NOT NULL REFERENCES raizesnordeste.contas (id),
+    unidade_id      UUID         NOT NULL REFERENCES raizesnordeste.unidades (id),
+    nome            VARCHAR(150) NOT NULL,
+    telefone        VARCHAR(11)  NOT NULL,
+    endereco        TEXT         NOT NULL,
+    data_nascimento DATE         NOT NULL
 );
 
 CREATE TABLE raizesnordeste.refresh_tokens

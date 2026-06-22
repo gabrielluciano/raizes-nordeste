@@ -23,7 +23,6 @@ public class ContaEntity {
 
     @Id
     private UUID id;
-    private UUID baseId;
     private String email;
     private String senhaHash;
 

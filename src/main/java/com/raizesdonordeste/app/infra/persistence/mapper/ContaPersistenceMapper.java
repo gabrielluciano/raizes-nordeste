@@ -12,7 +12,6 @@ public class ContaPersistenceMapper {
     public ContaEntity toEntity(Conta conta) {
         return new ContaEntity(
                 conta.getId().id(),
-                conta.getBaseId().id(),
                 conta.getEmail().valor(),
                 conta.getSenhaHash(),
                 conta.getStatus(),
@@ -23,7 +22,6 @@ public class ContaPersistenceMapper {
     public Conta toDomain(ContaEntity entity) {
         return Conta.builder()
                 .id(new Id(entity.getId()))
-                .baseId(new Id(entity.getBaseId()))
                 .email(new Email(entity.getEmail()))
                 .senhaHash(entity.getSenhaHash())
                 .status(entity.getStatus())

@@ -12,25 +12,23 @@ import lombok.Getter;
 public class Conta {
 
     private Id id;
-    private Id baseId;
     private Email email;
     private String senhaHash;
     private StatusConta status;
     private Role role;
 
     @Builder
-    public Conta(Id id, Id baseId, Email email, String senhaHash, StatusConta status, Role role) {
+    public Conta(Id id, Email email, String senhaHash, StatusConta status, Role role) {
         this.id = Guarda.naoNulo(id, "id");
-        this.baseId = Guarda.naoNulo(baseId, "baseId");
         this.email = Guarda.naoNulo(email, "email");
         this.senhaHash = Guarda.naoVazio(senhaHash, "senhaHash");
         this.status = Guarda.naoNulo(status, "status");
         this.role = Guarda.naoNulo(role, "role");
     }
 
-    public static Conta criar(Id baseId, String email, String senha, Role role, SenhaHasher hasher) {
+    public static Conta criar(String email, String senha, Role role, SenhaHasher hasher) {
         String senhaHash = hasher.gerarHash(senha);
-        return new Conta(Id.aleatorio(), baseId, new Email(email), senhaHash, StatusConta.ATIVA, role);
+        return new Conta(Id.aleatorio(), new Email(email), senhaHash, StatusConta.ATIVA, role);
     }
 
     public boolean verificarSenha(String senha, SenhaHasher hasher) {

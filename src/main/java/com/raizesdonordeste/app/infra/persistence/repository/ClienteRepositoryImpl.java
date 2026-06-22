@@ -24,6 +24,11 @@ public class ClienteRepositoryImpl implements ClienteRepository {
     }
 
     @Override
+    public Optional<Cliente> obterPorContaId(Id contaId) {
+        return clienteJpaRepository.findByContaId(contaId.id()).map(mapper::toDomain);
+    }
+
+    @Override
     public Optional<Cliente> obterPorCpf(CPF cpf) {
         return clienteJpaRepository.findByCpf(cpf.valor()).map(mapper::toDomain);
     }

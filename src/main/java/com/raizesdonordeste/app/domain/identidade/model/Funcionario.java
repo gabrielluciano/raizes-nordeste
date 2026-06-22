@@ -4,9 +4,12 @@ import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.comum.model.Telefone;
 import com.raizesdonordeste.app.domain.comum.util.Guarda;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
+@Getter
 public class Funcionario {
 
     private static final int IDADE_MINIMA_FUNCIONARIO = 16;
@@ -33,6 +36,25 @@ public class Funcionario {
         this.telefone = Guarda.naoNulo(telefone, "telefone");
         this.endereco = Guarda.naoVazio(endereco, "endereco");
         this.dataNascimento = dataNascimento;
+    }
+
+    public static Funcionario criar(
+            Id contaId,
+            Id unidadeId,
+            String nome,
+            String telefone,
+            String endereco,
+            LocalDate dataNascimento
+    ) {
+        return new Funcionario(
+                Id.aleatorio(),
+                contaId,
+                unidadeId,
+                nome,
+                new Telefone(telefone),
+                endereco,
+                dataNascimento
+        );
     }
 
     private boolean dataNascimentoValida(LocalDate dataNascimento) {
