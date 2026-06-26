@@ -1,5 +1,6 @@
 package com.raizesdonordeste.app.domain.identidade.model;
 
+import com.raizesdonordeste.app.domain.comum.exception.ValidacaoException;
 import com.raizesdonordeste.app.domain.comum.model.CPF;
 import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.comum.model.Telefone;
@@ -15,18 +16,18 @@ public class Cliente {
 
     private static final int IDADE_MINIMA_CLIENTE = 14;
 
-    private Id id;
-    private Id contaId;
-    private String nome;
-    private CPF cpf;
-    private Telefone telefone;
-    private String endereco;
-    private LocalDate dataNascimento;
+    private final Id id;
+    private final Id contaId;
+    private final String nome;
+    private final CPF cpf;
+    private final Telefone telefone;
+    private final String endereco;
+    private final LocalDate dataNascimento;
     private long saldoPontos;
     private boolean aceiteTermos;
     private LocalDateTime dataAceiteTermos;
     private String versaoTermos;
-    private LocalDateTime dataCadastro;
+    private final LocalDateTime dataCadastro;
 
     @Builder
     public Cliente(Id id,
@@ -43,7 +44,7 @@ public class Cliente {
                    LocalDateTime dataCadastro
     ) {
         if (!dataNascimentoValida(dataNascimento)) {
-            throw new IllegalArgumentException(
+            throw new ValidacaoException(
                     "data de nascimento inválida, deve possuir ao menos '%s' anos.".formatted(IDADE_MINIMA_CLIENTE));
         }
 
@@ -112,6 +113,9 @@ public class Cliente {
     }
 
     public void debitar(long pontos) {
+        if (!temSaldo(pontos)) {
+            throw new IllegalStateException("saldo de pontos insuficiente para débito.");
+        }
         this.saldoPontos -= pontos;
     }
 }

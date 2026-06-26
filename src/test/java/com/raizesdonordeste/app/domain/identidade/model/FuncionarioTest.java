@@ -1,5 +1,6 @@
 package com.raizesdonordeste.app.domain.identidade.model;
 
+import com.raizesdonordeste.app.domain.comum.exception.ValidacaoException;
 import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.comum.model.Telefone;
 import org.junit.jupiter.api.Test;
@@ -80,13 +81,13 @@ class FuncionarioTest {
 
     @Test
     void deveLancarExcecao_QuandoConstruidoComDataNascimentoInvalida() {
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() ->
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(() ->
                         criarFuncionario()
                                 .dataNascimento(null)
                                 .build())
                 .withMessage("data de nascimento inválida, deve possuir ao menos '16' anos.");
 
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() ->
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(() ->
                         criarFuncionario()
                                 .dataNascimento(LocalDate.now())
                                 .build())

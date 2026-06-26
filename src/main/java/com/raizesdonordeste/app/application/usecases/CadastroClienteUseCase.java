@@ -2,6 +2,7 @@ package com.raizesdonordeste.app.application.usecases;
 
 import com.raizesdonordeste.app.domain.comum.model.Email;
 import com.raizesdonordeste.app.domain.comum.model.Id;
+import com.raizesdonordeste.app.domain.identidade.exceptions.ContaJaCadastradaException;
 import com.raizesdonordeste.app.domain.identidade.model.CadastrarClienteComando;
 import com.raizesdonordeste.app.domain.identidade.model.Cliente;
 import com.raizesdonordeste.app.domain.identidade.model.Conta;
@@ -25,7 +26,7 @@ public class CadastroClienteUseCase implements CasoDeUso<CadastrarClienteComando
     @Transactional
     public Id executar(CadastrarClienteComando comando) {
         if (contaRepository.obterPorEmail(new Email(comando.email())).isPresent()) {
-            throw new IllegalStateException("Conta já cadastrada.");
+            throw new ContaJaCadastradaException();
         }
 
         Conta conta = Conta.criar(

@@ -6,7 +6,13 @@ CREATE TABLE raizesnordeste.contas
     email      VARCHAR(255) NOT NULL UNIQUE,
     senha_hash VARCHAR(255) NOT NULL,
     status     VARCHAR(20)  NOT NULL,
-    role       VARCHAR(20)  NOT NULL
+    role       VARCHAR(20)  NOT NULL,
+
+    CONSTRAINT chk_contas_role
+        CHECK (role IN ('CLIENTE', 'OPERADOR', 'COZINHA', 'GERENTE', 'ADMINISTRADOR')),
+
+    CONSTRAINT chk_contas_status
+        CHECK (status IN ('ATIVA', 'DESATIVADA'))
 );
 
 CREATE TABLE raizesnordeste.clientes
@@ -45,6 +51,95 @@ CREATE TABLE raizesnordeste.funcionarios
     endereco        TEXT         NOT NULL,
     data_nascimento DATE         NOT NULL
 );
+
+CREATE TABLE raizesnordeste.pratos
+(
+    id             UUID PRIMARY KEY,
+    unidade_id     UUID         NOT NULL REFERENCES raizesnordeste.unidades (id),
+    nome           VARCHAR(150) NOT NULL,
+    descricao      TEXT         NOT NULL,
+    preco_centavos BIGINT       NOT NULL,
+    disponivel     BOOLEAN      NOT NULL DEFAULT TRUE,
+    ativo          BOOLEAN      NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE raizesnordeste.promocoes
+(
+    id                  UUID PRIMARY KEY,
+    prato_id            UUID             NOT NULL REFERENCES raizesnordeste.pratos (id),
+    descricao           TEXT             NOT NULL,
+    percentual_desconto DOUBLE PRECISION NOT NULL,
+    data_hora_inicio    TIMESTAMP        NOT NULL,
+    data_hora_fim       TIMESTAMP        NOT NULL,
+    ativa               BOOLEAN          NOT NULL DEFAULT TRUE
+);
+
+CREATE INDEX idx_promocoes_prato_id ON raizesnordeste.promocoes (prato_id);
+
+CREATE TABLE raizesnordeste.regras_fidelidade
+(
+    id                      UUID PRIMARY KEY,
+    valor_por_ponto         NUMERIC(10, 6) NOT NULL,
+    acumulo_por_centavo     NUMERIC(10, 6) NOT NULL,
+    validade_pontos_meses   INT            NOT NULL,
+    teto_resgate_percentual INT            NOT NULL,
+    ativa                   BOOLEAN        NOT NULL DEFAULT FALSE,
+    ativada_em              TIMESTAMP      NOT NULL,
+    inativada_em            TIMESTAMP
+);
+
+CREATE UNIQUE INDEX idx_regras_fidelidade_ativa ON raizesnordeste.regras_fidelidade (ativa) WHERE ativa = TRUE;
+
+CREATE TABLE raizesnordeste.movimentacoes_pontos
+(
+    id                  UUID PRIMARY KEY,
+    cliente_id          UUID        NOT NULL REFERENCES raizesnordeste.clientes (id),
+    tipo                VARCHAR(20) NOT NULL,
+    pontos              BIGINT      NOT NULL,
+    data_contabilizacao TIMESTAMP   NOT NULL,
+    data_expiracao      TIMESTAMP,
+
+    CONSTRAINT chk_movimentacoes_pontos_tipo
+        CHECK (tipo IN ('ACUMULO', 'RESGATE', 'EXPIRACAO'))
+);
+
+CREATE INDEX idx_movimentacoes_pontos_cliente_id ON raizesnordeste.movimentacoes_pontos (cliente_id);
+
+CREATE TABLE raizesnordeste.pedidos
+(
+    id                               UUID PRIMARY KEY,
+    unidade_id                       UUID        NOT NULL REFERENCES raizesnordeste.unidades (id),
+    cliente_id                       UUID REFERENCES raizesnordeste.clientes (id),
+    funcionario_id                   UUID REFERENCES raizesnordeste.funcionarios (id),
+    nome_cliente                     VARCHAR(150),
+    canal                            VARCHAR(20) NOT NULL,
+    status                           VARCHAR(30) NOT NULL,
+    pickup                           BOOLEAN     NOT NULL DEFAULT FALSE,
+    horario_pedido                   TIMESTAMP   NOT NULL,
+    horario_preparo                  TIMESTAMP,
+    consentimento_fidelizacao        BOOLEAN     NOT NULL DEFAULT FALSE,
+    valor_total_centavos             BIGINT      NOT NULL DEFAULT 0,
+    valor_desconto_promocao_centavos BIGINT      NOT NULL DEFAULT 0,
+    valor_desconto_pontos_centavos   BIGINT      NOT NULL DEFAULT 0,
+    valor_final_centavos             BIGINT      NOT NULL DEFAULT 0,
+
+    CONSTRAINT chk_pedidos_canal
+        CHECK (canal IN ('APP', 'TOTEM', 'BALCAO')),
+
+    CONSTRAINT chk_pedidos_status
+        CHECK (status IN ('PAGAMENTO_PENDENTE', 'AGUARDANDO_PREPARO', 'EM_PREPARO', 'PRONTO', 'CONCLUIDO', 'CANCELADO'))
+);
+
+CREATE TABLE raizesnordeste.itens_pedido
+(
+    id                      UUID PRIMARY KEY,
+    pedido_id               UUID   NOT NULL REFERENCES raizesnordeste.pedidos (id),
+    prato_id                UUID   NOT NULL REFERENCES raizesnordeste.pratos (id),
+    quantidade              INT    NOT NULL,
+    preco_unitario_centavos BIGINT NOT NULL
+);
+
+CREATE INDEX idx_itens_pedido_pedido_id ON raizesnordeste.itens_pedido (pedido_id);
 
 CREATE TABLE raizesnordeste.refresh_tokens
 (

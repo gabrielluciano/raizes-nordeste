@@ -7,9 +7,9 @@ import lombok.Getter;
 @Getter
 public class LoginRequest {
 
-    @Email
+    @Email(message = "email inválido.")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "senha não deve ser vazia.")
     private String senha;
 }

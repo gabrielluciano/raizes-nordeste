@@ -2,11 +2,13 @@ package com.raizesdonordeste.app.domain.pedido.model;
 
 import com.raizesdonordeste.app.domain.cardapio.model.Prato;
 import com.raizesdonordeste.app.domain.cardapio.model.Promocao;
+import com.raizesdonordeste.app.domain.comum.exception.ValidacaoException;
 import com.raizesdonordeste.app.domain.comum.model.Dinheiro;
 import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.fidelidade.model.RegrasFidelidade;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -136,7 +138,7 @@ class PedidoTest {
 
     @Test
     void deveLancarExcecao_QuandoConstruidoComCanalAppEClientIdNulo() {
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() ->
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(() ->
                         criarPedido()
                                 .canal(CanalPedido.APP)
                                 .clienteId(null)
@@ -146,7 +148,7 @@ class PedidoTest {
 
     @Test
     void deveLancarExcecao_QuandoConstruidoComCanalDiferenteDeAppEClientIdPresente() {
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() ->
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(() ->
                         criarPedido()
                                 .canal(CanalPedido.TOTEM)
                                 .clienteId(Id.aleatorio())
@@ -156,7 +158,7 @@ class PedidoTest {
 
     @Test
     void deveLancarExcecao_QuandoConstruidoComCanalDiferenteDeAppENaoTemNome() {
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() ->
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(() ->
                         criarPedido()
                                 .canal(CanalPedido.TOTEM)
                                 .clienteId(null)
@@ -164,7 +166,7 @@ class PedidoTest {
                                 .build())
                 .withMessage("nomeCliente deve ser informado quando o canal não é APP.");
 
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() ->
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(() ->
                         criarPedido()
                                 .canal(CanalPedido.TOTEM)
                                 .clienteId(null)
@@ -175,7 +177,7 @@ class PedidoTest {
 
     @Test
     void deveLancarExcecao_QuandoConstruidoComCanalAppEFuncionarioIdNulo() {
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() ->
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(() ->
                         criarPedido()
                                 .canal(CanalPedido.TOTEM)
                                 .clienteId(null)
@@ -184,6 +186,40 @@ class PedidoTest {
                 .withMessage("funcionarioId deve ser informado quando não for APP.");
     }
 
+    @Test
+    void deveLancarExcecao_QuandoConstruidoComCanalDiferenteDeAppComPickupEHorarioPreparo() {
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(() ->
+                        criarPedido()
+                                .clienteId(null)
+                                .funcionarioId(Id.aleatorio())
+                                .canal(CanalPedido.BALCAO)
+                                .pickup(true)
+                                .horarioPreparo(LocalDateTime.now())
+                                .build())
+                .withMessage("horarioPreparo só deve ser informado em pedidos pickup via APP.");
+    }
+
+    @Test
+    void deveLancarExcecao_QuandoConstruidoComHorarioPreparoNaoAposHorarioPedido() {
+        LocalDateTime now = LocalDateTime.now();
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(() ->
+                        criarPedido()
+                                .canal(CanalPedido.APP)
+                                .pickup(true)
+                                .horarioPreparo(now)
+                                .horarioPedido(now)
+                                .build())
+                .withMessage("horarioPreparo deve ser após horarioPedido.");
+
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(() ->
+                        criarPedido()
+                                .canal(CanalPedido.APP)
+                                .pickup(true)
+                                .horarioPreparo(now.minusHours(1))
+                                .horarioPedido(now)
+                                .build())
+                .withMessage("horarioPreparo deve ser após horarioPedido.");
+    }
 
     @Test
     void deveLancarExcecao_QuandoConsolidarTotaisEResultadoCalculoNulo() {
@@ -317,7 +353,7 @@ class PedidoTest {
                 .precoUnitario(new Dinheiro(1000))
                 .build()));
         RegrasFidelidade regrasFidelidade = criarRegrasFidelidade()
-                .valorPonto(new Dinheiro(1))
+                .valorPorPonto(BigDecimal.ONE)
                 .tetoResgatePercentual(100)
                 .build();
 
@@ -338,7 +374,7 @@ class PedidoTest {
                 .precoUnitario(new Dinheiro(1000))
                 .build()));
         RegrasFidelidade regrasFidelidade = criarRegrasFidelidade()
-                .valorPonto(new Dinheiro(1))
+                .valorPorPonto(BigDecimal.ONE)
                 .tetoResgatePercentual(100)
                 .build();
 
@@ -359,7 +395,7 @@ class PedidoTest {
                 .precoUnitario(new Dinheiro(1000))
                 .build()));
         RegrasFidelidade regrasFidelidade = criarRegrasFidelidade()
-                .valorPonto(new Dinheiro(1))
+                .valorPorPonto(BigDecimal.ONE)
                 .tetoResgatePercentual(20)
                 .build();
 
@@ -371,6 +407,26 @@ class PedidoTest {
         assertThat(resultadoCalculo.valorDescontoPromocional()).isEqualTo(Dinheiro.ZERO);
         assertThat(resultadoCalculo.valorDescontoPontos()).isEqualTo(new Dinheiro(200));
         assertThat(resultadoCalculo.pontosConsumidos()).isEqualTo(200);
+    }
+
+    @Test
+    void naoDeveConsumirMaisPontosQueDisponiveis_QuandoDescontoFracionadoArredondaParaCima() {
+        Pedido pedido = criar(List.of(criarItemPedido()
+                .quantidade(1)
+                .precoUnitario(new Dinheiro(3590))
+                .build()));
+        RegrasFidelidade regrasFidelidade = criarRegrasFidelidade()
+                .valorPorPonto(BigDecimal.valueOf(0.01))
+                .tetoResgatePercentual(20)
+                .build();
+
+        ResultadoCalculo resultadoCalculo = pedido.calcularTotais(
+                Collections.emptySet(), regrasFidelidade, 500, 50);
+
+        assertThat(resultadoCalculo.valorTotal()).isEqualTo(new Dinheiro(3590));
+        assertThat(resultadoCalculo.valorDescontoPontos()).isEqualTo(new Dinheiro(1));
+        assertThat(resultadoCalculo.valorFinal()).isEqualTo(new Dinheiro(3589));
+        assertThat(resultadoCalculo.pontosConsumidos()).isEqualTo(50);
     }
 
     @Test
@@ -397,7 +453,7 @@ class PedidoTest {
                 .percentualDesconto(5)
                 .build();
         RegrasFidelidade regrasFidelidade = criarRegrasFidelidade()
-                .valorPonto(new Dinheiro(2))
+                .valorPorPonto(BigDecimal.valueOf(2))
                 .tetoResgatePercentual(10)
                 .build();
 
@@ -422,6 +478,7 @@ class PedidoTest {
                 .status(StatusPedido.PAGAMENTO_PENDENTE)
                 .pickup(false)
                 .horarioPedido(LocalDateTime.now())
+                .horarioPreparo(null)
                 .consentimentoFidelizacao(false)
                 .itens(List.of(criarItemPedido().build()))
                 .valorTotal(new Dinheiro(1000))
@@ -438,6 +495,7 @@ class PedidoTest {
                 null,
                 CanalPedido.APP,
                 false,
+                null,
                 LocalDateTime.now(),
                 true,
                 itens
@@ -476,7 +534,9 @@ class PedidoTest {
 
     private RegrasFidelidade.RegrasFidelidadeBuilder criarRegrasFidelidade() {
         return RegrasFidelidade.builder()
-                .valorPonto(new Dinheiro(1))
+                .id(Id.aleatorio())
+                .valorPorPonto(BigDecimal.ONE)
+                .acumuloPorCentavo(BigDecimal.valueOf(0.01))
                 .validadePontosMeses(6)
                 .tetoResgatePercentual(20);
     }

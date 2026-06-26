@@ -13,27 +13,27 @@ import java.util.UUID;
 @Getter
 public class CadastroFuncionarioRequest {
 
-    @NotBlank
+    @NotBlank(message = "nome não deve ser vazio.")
     private String nome;
 
-    @NotNull
+    @NotNull(message = "unidadeId não deve ser nulo.")
     private UUID unidadeId;
 
-    @NotBlank
+    @NotBlank(message = "telefone não deve ser vazio.")
     private String telefone;
 
-    @NotBlank
+    @NotBlank(message = "endereco não deve ser vazio.")
     private String endereco;
 
-    @Email
+    @Email(message = "email inválido.")
     private String email;
 
     @SenhaForte
     private String senha;
 
-    @NotNull
+    @NotNull(message = "dataNascimento não deve ser nula.")
     private LocalDate dataNascimento;
 
-    @NotNull
+    @NotNull(message = "role não deve ser nula.")
     private Role role;
 }

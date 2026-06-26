@@ -10,12 +10,12 @@ import java.time.LocalDateTime;
 @Getter
 public class MovimentacaoPontos {
 
-    private Id id;
-    private Id clienteId;
-    private TipoMovPontos tipo;
-    private long pontos;
-    private LocalDateTime dataContabilizacao;
-    private LocalDateTime dataExpiracao;
+    private final Id id;
+    private final Id clienteId;
+    private final TipoMovPontos tipo;
+    private final long pontos;
+    private final LocalDateTime dataContabilizacao;
+    private final LocalDateTime dataExpiracao;
 
     @Builder
     public MovimentacaoPontos(

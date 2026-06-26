@@ -6,20 +6,15 @@ import com.raizesdonordeste.app.domain.comum.util.Guarda;
 import lombok.Builder;
 import lombok.Getter;
 
+@Getter
 public class Prato {
 
-    @Getter
-    private Id id;
-    @Getter
-    private Id unidadeId;
-    @Getter
+    private final Id id;
+    private final Id unidadeId;
     private String nome;
-    @Getter
     private String descricao;
-    @Getter
     private Dinheiro preco;
     private boolean disponivel;
-    @Getter
     private boolean ativo;
 
     @Builder

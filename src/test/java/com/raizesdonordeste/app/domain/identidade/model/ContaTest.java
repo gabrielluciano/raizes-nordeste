@@ -1,5 +1,6 @@
 package com.raizesdonordeste.app.domain.identidade.model;
 
+import com.raizesdonordeste.app.domain.comum.exception.ValidacaoException;
 import com.raizesdonordeste.app.domain.comum.model.Email;
 import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.identidade.services.SenhaHasher;
@@ -114,7 +115,7 @@ class ContaTest {
     void deveLancarExcecao_quandoTrocarSenhaFraca() {
         Conta conta = criarConta().build();
 
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() ->
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(() ->
                         conta.trocarSenha("senha-fraca", testSenhaHasher))
                 .withMessage("senha fraca recebida");
     }

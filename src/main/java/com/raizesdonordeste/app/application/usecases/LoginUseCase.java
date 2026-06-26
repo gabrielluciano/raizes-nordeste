@@ -1,6 +1,7 @@
 package com.raizesdonordeste.app.application.usecases;
 
 import com.raizesdonordeste.app.domain.comum.model.Email;
+import com.raizesdonordeste.app.domain.identidade.exceptions.CredenciaisInvalidasException;
 import com.raizesdonordeste.app.domain.identidade.model.*;
 import com.raizesdonordeste.app.domain.identidade.repository.ContaRepository;
 import com.raizesdonordeste.app.domain.identidade.repository.RefreshTokenRepository;
@@ -26,14 +27,14 @@ public class LoginUseCase implements CasoDeUso<LoginComando, TokensAutenticacao>
     @Override
     public TokensAutenticacao executar(LoginComando comando) {
         Conta conta = contaRepository.obterPorEmail(new Email(comando.email()))
-                .orElseThrow(() -> new RuntimeException("Credenciais inválidas"));
+                .orElseThrow(CredenciaisInvalidasException::new);
 
         if (!conta.verificarSenha(comando.senha(), senhaHasher)) {
-            throw new RuntimeException("Credenciais inválidas");
+            throw new CredenciaisInvalidasException();
         }
 
         if (!StatusConta.ATIVA.equals(conta.getStatus())) {
-            throw new RuntimeException("Credenciais inválidas");
+            throw new CredenciaisInvalidasException();
         }
 
         String accessToken = provedorToken.gerarAccessToken(conta, DURACAO_ACCESS_TOKEN_MIN);

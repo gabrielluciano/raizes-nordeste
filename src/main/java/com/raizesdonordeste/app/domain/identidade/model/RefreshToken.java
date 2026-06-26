@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 @Getter
 public class RefreshToken {
 
-    private Id id;
-    private Id contaId;
-    private String tokenHash;
-    private LocalDateTime expiraEm;
+    private final Id id;
+    private final Id contaId;
+    private final String tokenHash;
+    private final LocalDateTime expiraEm;
     private LocalDateTime revogadoEm;
 
     @Builder

@@ -1,7 +1,9 @@
 package com.raizesdonordeste.app.application.usecases;
 
+import com.raizesdonordeste.app.domain.comum.exception.ValidacaoException;
 import com.raizesdonordeste.app.domain.comum.model.Email;
 import com.raizesdonordeste.app.domain.comum.model.Id;
+import com.raizesdonordeste.app.domain.identidade.exceptions.ContaJaCadastradaException;
 import com.raizesdonordeste.app.domain.identidade.model.CadastrarFuncionarioComando;
 import com.raizesdonordeste.app.domain.identidade.model.Conta;
 import com.raizesdonordeste.app.domain.identidade.model.Funcionario;
@@ -27,15 +29,15 @@ public class CadastroFuncionarioUseCase implements CasoDeUso<CadastrarFuncionari
     @Transactional
     public Id executar(CadastrarFuncionarioComando comando) {
         if (!Role.isFuncionario(comando.role())) {
-            throw new IllegalArgumentException("Role inválida para funcionário: " + comando.role());
+            throw new ValidacaoException("Role inválida para funcionário: " + comando.role());
         }
 
         if (contaRepository.obterPorEmail(new Email(comando.email())).isPresent()) {
-            throw new IllegalStateException("Conta já cadastrada.");
+            throw new ContaJaCadastradaException();
         }
 
         if (unidadeRepository.obterPorId(comando.unidadeId()).isEmpty()) {
-            throw new IllegalArgumentException("Unidade não existente.");
+            throw new ValidacaoException("Unidade não existente.");
         }
 
         Conta conta = Conta.criar(

@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 @Getter
 public class Unidade {
 
-    private Id id;
-    private String nome;
-    private String endereco;
-    private Horario horarioFuncionamento;
-    private boolean ativa;
+    private final Id id;
+    private final String nome;
+    private final String endereco;
+    private final Horario horarioFuncionamento;
+    private final boolean ativa;
 
     @Builder
     public Unidade(Id id, String nome, String endereco, Horario horarioFuncionamento, boolean ativa) {

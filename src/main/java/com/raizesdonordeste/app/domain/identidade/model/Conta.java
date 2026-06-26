@@ -1,5 +1,6 @@
 package com.raizesdonordeste.app.domain.identidade.model;
 
+import com.raizesdonordeste.app.domain.comum.exception.ValidacaoException;
 import com.raizesdonordeste.app.domain.comum.model.Email;
 import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.comum.util.Guarda;
@@ -11,11 +12,11 @@ import lombok.Getter;
 @Getter
 public class Conta {
 
-    private Id id;
-    private Email email;
+    private final Id id;
+    private final Email email;
     private String senhaHash;
     private StatusConta status;
-    private Role role;
+    private final Role role;
 
     @Builder
     public Conta(Id id, Email email, String senhaHash, StatusConta status, Role role) {
@@ -37,7 +38,7 @@ public class Conta {
 
     public void trocarSenha(String novaSenha, SenhaHasher hasher) {
         if (!SenhaValidator.validaSenha(novaSenha)) {
-            throw new IllegalArgumentException("senha fraca recebida");
+            throw new ValidacaoException("senha fraca recebida");
         }
         this.senhaHash = hasher.gerarHash(novaSenha);
     }

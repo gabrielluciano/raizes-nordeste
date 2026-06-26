@@ -15,3 +15,7 @@ app:
   jwt:
     issuer: raizes-nordeste
     secret: ${JWT_SECRET:segredo-forte-de-pelo-menos-32-bytes}
+
+logging:
+  level:
+    org.springframework.security: debug

@@ -13,8 +13,7 @@ public enum Role {
     public static final Set<Role> FUNCIONARIOS = Set.of(
             OPERADOR,
             COZINHA,
-            GERENTE,
-            ADMINISTRADOR
+            GERENTE
     );
 
     public static boolean isCliente(Role role) {

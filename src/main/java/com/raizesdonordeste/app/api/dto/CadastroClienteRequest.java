@@ -12,27 +12,27 @@ import java.time.LocalDate;
 @Getter
 public class CadastroClienteRequest {
 
-    @NotBlank
+    @NotBlank(message = "nome não deve ser vazio.")
     private String nome;
 
-    @CPF
+    @CPF(message = "CPF inválido.")
     private String cpf;
 
-    @NotBlank
+    @NotBlank(message = "telefone não deve ser vazio.")
     private String telefone;
 
     @NotBlank
     private String endereco;
 
-    @Email
+    @Email(message = "email inválido.")
     private String email;
 
     @SenhaForte
     private String senha;
 
-    @NotNull
+    @NotNull(message = "dataNascimento não deve ser nula.")
     private LocalDate dataNascimento;
 
-    @NotBlank
+    @NotBlank(message = "versaoAceiteTermos não deve ser vazio.")
     private String versaoAceiteTermos;
 }

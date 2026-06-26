@@ -12,6 +12,7 @@ import com.raizesdonordeste.app.domain.identidade.model.LoginComando;
 import com.raizesdonordeste.app.domain.identidade.model.TokensAutenticacao;
 import com.raizesdonordeste.app.infra.mapper.CadastrarClienteComandoMapper;
 import com.raizesdonordeste.app.infra.mapper.LoginComandoMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class AuthResource {
     private final LoginUseCase loginUseCase;
 
     @PostMapping("signup")
-    public ResponseEntity<CadastroResponse> cadastrar(@RequestBody CadastroClienteRequest request) {
+    public ResponseEntity<CadastroResponse> cadastrar(@Valid @RequestBody CadastroClienteRequest request) {
         CadastrarClienteComando comando = cadastrarClienteComandoMapper.toComando(request);
         Id id = cadastroClienteUseCase.executar(comando);
         return ResponseEntity
@@ -42,7 +43,7 @@ public class AuthResource {
     }
 
     @PostMapping("login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         LoginComando comando = loginComandoMapper.toComando(request);
         TokensAutenticacao tokens = loginUseCase.executar(comando);
         return ResponseEntity.ok(new LoginResponse(

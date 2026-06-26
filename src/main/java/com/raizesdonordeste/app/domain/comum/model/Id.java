@@ -18,4 +18,15 @@ public record Id(UUID id) {
     public static Id aleatorio() {
         return new Id(UUID.randomUUID());
     }
+
+    public static Id fromString(String id) {
+        return new Id(id == null ? null : UUID.fromString(id));
+    }
+
+    public static UUID toUUID(Id id) {
+        if (id == null) {
+            return null;
+        }
+        return id.id;
+    }
 }

@@ -4,19 +4,21 @@ import com.raizesdonordeste.app.domain.comum.model.Dinheiro;
 import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.comum.util.Guarda;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class Promocao {
 
     public static final double DESCONTO_MAXIMO = 50.0;
 
-    private Id id;
-    private Id pratoId;
-    private String descricao;
-    private double percentualDesconto;
-    private LocalDateTime dataHoraInicio;
-    private LocalDateTime dataHoraFim;
+    private final Id id;
+    private final Id pratoId;
+    private final String descricao;
+    private final double percentualDesconto;
+    private final LocalDateTime dataHoraInicio;
+    private final LocalDateTime dataHoraFim;
     private boolean ativa;
 
     @Builder

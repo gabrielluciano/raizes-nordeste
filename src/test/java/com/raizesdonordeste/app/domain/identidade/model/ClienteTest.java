@@ -1,5 +1,6 @@
 package com.raizesdonordeste.app.domain.identidade.model;
 
+import com.raizesdonordeste.app.domain.comum.exception.ValidacaoException;
 import com.raizesdonordeste.app.domain.comum.model.CPF;
 import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.comum.model.Telefone;
@@ -81,13 +82,13 @@ class ClienteTest {
 
     @Test
     void deveLancarExcecao_QuandoConstruidoComDataNascimentoInvalida() {
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() ->
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(() ->
                         criarCliente()
                                 .dataNascimento(null)
                                 .build())
                 .withMessage("data de nascimento inválida, deve possuir ao menos '14' anos.");
 
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() ->
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(() ->
                         criarCliente()
                                 .dataNascimento(LocalDate.now())
                                 .build())
@@ -150,6 +151,19 @@ class ClienteTest {
         cliente.debitar(10);
 
         assertThat(cliente.temSaldo(100)).isFalse();
+    }
+
+    @Test
+    void deveLancarExcecao_QuandoDebitarMaisQueOSaldo() {
+        Cliente cliente = criarCliente()
+                .saldoPontos(50)
+                .build();
+
+        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() ->
+                        cliente.debitar(100))
+                .withMessage("saldo de pontos insuficiente para débito.");
+
+        assertThat(cliente.getSaldoPontos()).isEqualTo(50);
     }
 
     private Cliente.ClienteBuilder criarCliente() {

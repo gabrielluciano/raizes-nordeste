@@ -10,10 +10,10 @@ import lombok.Getter;
 @Getter
 public class ItemPedido {
 
-    private Id id;
-    private Id pratoId;
-    private int quantidade;
-    private Dinheiro precoUnitario;
+    private final Id id;
+    private final Id pratoId;
+    private final int quantidade;
+    private final Dinheiro precoUnitario;
 
     @Builder
     public ItemPedido(Id id, Id pratoId, int quantidade, Dinheiro precoUnitario) {
