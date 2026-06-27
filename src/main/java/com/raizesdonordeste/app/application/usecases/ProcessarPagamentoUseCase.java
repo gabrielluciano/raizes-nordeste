@@ -22,13 +22,17 @@ import java.time.LocalDateTime;
 @Transactional
 public class ProcessarPagamentoUseCase extends AbstractPagamentoUseCase<ResultadoProcessamentoPagamento> {
 
+    private final FidelidadeUseCase fidelidadeUseCase;
+
     public ProcessarPagamentoUseCase(
             ClienteRepository clienteRepository,
             FuncionarioRepository funcionarioRepository,
             PedidoRepository pedidoRepository,
             PagamentoRepository pagamentoRepository,
-            GatewayPagamento gatewayPagamento) {
+            GatewayPagamento gatewayPagamento,
+            FidelidadeUseCase fidelidadeUseCase) {
         super(clienteRepository, funcionarioRepository, pedidoRepository, pagamentoRepository, gatewayPagamento);
+        this.fidelidadeUseCase = fidelidadeUseCase;
     }
 
     @Override
@@ -62,6 +66,7 @@ public class ProcessarPagamentoUseCase extends AbstractPagamentoUseCase<Resultad
             pagamento.aprovar(resposta.id(), resposta.pagoEm());
             pedidoRepository.atualizar(pedido);
             pagamentoRepository.inserir(pagamento);
+            fidelidadeUseCase.executar(pedido.getId());
         }
 
         return criarRetorno(pagamento, pedido);

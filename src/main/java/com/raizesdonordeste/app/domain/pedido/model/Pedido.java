@@ -22,6 +22,7 @@ public class Pedido {
     private final Id id;
     private final Id unidadeId;
     private final Id clienteId;
+    private final Id clienteFidelidadeId;
     private final Id funcionarioId;
     private final String nomeCliente;
     private final CanalPedido canal;
@@ -42,6 +43,7 @@ public class Pedido {
     public Pedido(Id id,
                   Id unidadeId,
                   Id clienteId,
+                  Id clienteFidelidadeId,
                   Id funcionarioId,
                   String nomeCliente,
                   CanalPedido canal,
@@ -58,6 +60,7 @@ public class Pedido {
         this.id = Guarda.naoNulo(id, "id");
         this.unidadeId = Guarda.naoNulo(unidadeId, "unidadeId");
         this.clienteId = clienteId;
+        this.clienteFidelidadeId = clienteFidelidadeId;
         this.funcionarioId = funcionarioId;
         this.nomeCliente = nomeCliente;
         this.canal = Guarda.naoNulo(canal, "canal");
@@ -78,6 +81,7 @@ public class Pedido {
 
     public static Pedido criar(Id unidadeId,
                                Id clienteId,
+                               Id clienteFidelidadeId,
                                Id funcionarioId,
                                String nomeCliente,
                                CanalPedido canal,
@@ -90,6 +94,7 @@ public class Pedido {
                 .id(Id.aleatorio())
                 .unidadeId(unidadeId)
                 .clienteId(clienteId)
+                .clienteFidelidadeId(clienteFidelidadeId)
                 .funcionarioId(funcionarioId)
                 .nomeCliente(nomeCliente)
                 .canal(canal)

@@ -108,8 +108,7 @@ class PedidoServiceTest {
         ResultadoCalculo resultado = pedidoService.calcularTotais(pedido, regras, Collections.emptySet(), cliente, 0);
         pedido.consolidarTotais(resultado);
 
-        Optional<MovimentacaoPontos> movimentacao = pedidoService.calcularMovimentacaoPontos(
-                resultado.pontosConsumidos(), cliente, pedido, regras, resultado.valorFinal());
+        Optional<MovimentacaoPontos> movimentacao = pedidoService.calcularAcumulo(cliente, pedido, regras);
 
         assertThat(movimentacao).isPresent();
         assertThat(movimentacao.get().getTipo()).isEqualTo(TipoMovPontos.ACUMULO);
@@ -123,8 +122,7 @@ class PedidoServiceTest {
         ResultadoCalculo resultado = pedidoService.calcularTotais(pedido, regras, Collections.emptySet(), cliente, 10);
         pedido.consolidarTotais(resultado);
 
-        Optional<MovimentacaoPontos> movimentacao = pedidoService.calcularMovimentacaoPontos(
-                resultado.pontosConsumidos(), cliente, pedido, regras, resultado.valorFinal());
+        Optional<MovimentacaoPontos> movimentacao = pedidoService.calcularResgate(resultado.pontosConsumidos(), cliente);
 
         assertThat(movimentacao).isPresent();
         assertThat(movimentacao.get().getTipo()).isEqualTo(TipoMovPontos.RESGATE);
@@ -138,10 +136,8 @@ class PedidoServiceTest {
         ResultadoCalculo resultado = pedidoService.calcularTotais(pedido, regras, Collections.emptySet(), cliente, 0);
         pedido.consolidarTotais(resultado);
 
-        Optional<MovimentacaoPontos> movimentacao = pedidoService.calcularMovimentacaoPontos(
-                resultado.pontosConsumidos(), cliente, pedido, regras, resultado.valorFinal());
-
-        assertThat(movimentacao).isEmpty();
+        assertThat(pedidoService.calcularAcumulo(cliente, pedido, regras)).isEmpty();
+        assertThat(pedidoService.calcularResgate(resultado.pontosConsumidos(), cliente)).isEmpty();
     }
 
     @Test
@@ -154,8 +150,7 @@ class PedidoServiceTest {
         ResultadoCalculo resultado = pedidoService.calcularTotais(pedido, regras, Collections.emptySet(), cliente, 0);
         pedido.consolidarTotais(resultado);
 
-        Optional<MovimentacaoPontos> movimentacao = pedidoService.calcularMovimentacaoPontos(
-                resultado.pontosConsumidos(), cliente, pedido, regras, resultado.valorFinal());
+        Optional<MovimentacaoPontos> movimentacao = pedidoService.calcularAcumulo(cliente, pedido, regras);
 
         assertThat(movimentacao).isPresent();
         assertThat(movimentacao.get().getTipo()).isEqualTo(TipoMovPontos.ACUMULO);

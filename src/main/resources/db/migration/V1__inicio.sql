@@ -110,6 +110,7 @@ CREATE TABLE raizesnordeste.pedidos
     id                               UUID PRIMARY KEY,
     unidade_id                       UUID        NOT NULL REFERENCES raizesnordeste.unidades (id),
     cliente_id                       UUID REFERENCES raizesnordeste.clientes (id),
+    cliente_fidelidade_id            UUID REFERENCES raizesnordeste.clientes (id),
     funcionario_id                   UUID REFERENCES raizesnordeste.funcionarios (id),
     nome_cliente                     VARCHAR(150),
     canal                            VARCHAR(20) NOT NULL,

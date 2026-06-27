@@ -19,6 +19,7 @@ public class ConfirmarPagamentoPixUseCase implements CasoDeUso<ConfirmarPagament
 
     private final PagamentoRepository pagamentoRepository;
     private final PedidoRepository pedidoRepository;
+    private final FidelidadeUseCase fidelidadeUseCase;
 
     @Override
     public ResultadoConfirmacaoPix executar(ConfirmarPagamentoPixComando comando) {
@@ -42,6 +43,7 @@ public class ConfirmarPagamentoPixUseCase implements CasoDeUso<ConfirmarPagament
 
         pagamentoRepository.atualizar(pagamento);
         pedidoRepository.atualizar(pedido);
+        fidelidadeUseCase.executar(pedido.getId());
 
         return criarResultado(pagamento);
     }

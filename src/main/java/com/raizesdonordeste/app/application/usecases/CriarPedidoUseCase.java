@@ -9,9 +9,7 @@ import com.raizesdonordeste.app.domain.cardapio.repository.PromocaoRepository;
 import com.raizesdonordeste.app.domain.comum.exception.ValidacaoException;
 import com.raizesdonordeste.app.domain.comum.model.CPF;
 import com.raizesdonordeste.app.domain.comum.model.Id;
-import com.raizesdonordeste.app.domain.fidelidade.model.MovimentacaoPontos;
 import com.raizesdonordeste.app.domain.fidelidade.model.RegrasFidelidade;
-import com.raizesdonordeste.app.domain.fidelidade.model.TipoMovPontos;
 import com.raizesdonordeste.app.domain.fidelidade.repository.MovimentacaoPontosRepository;
 import com.raizesdonordeste.app.domain.fidelidade.repository.RegrasFidelidadeRepository;
 import com.raizesdonordeste.app.domain.identidade.model.Cliente;
@@ -32,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -84,22 +81,14 @@ public class CriarPedidoUseCase implements CasoDeUso<CriarPedidoComando, Id> {
 
         pedido.consolidarTotais(resultado);
 
-        Optional<MovimentacaoPontos> movimentacao = pedidoService.calcularMovimentacaoPontos(
-                resultado.pontosConsumidos(), clienteFidelidade, pedido, regras, resultado.valorFinal());
-
-        movimentacao.ifPresent(mov -> {
-            if (TipoMovPontos.ACUMULO.equals(mov.getTipo())) {
-                clienteFidelidade.creditar(mov.getPontos());
-            } else {
-                clienteFidelidade.debitar(mov.getPontos());
-            }
-        });
-
         pedidoRepository.inserir(pedido);
-        movimentacao.ifPresent(movimentacaoPontosRepository::inserir);
-        if (clienteFidelidade != null && movimentacao.isPresent()) {
-            clienteRepository.atualizar(clienteFidelidade);
-        }
+
+        pedidoService.calcularResgate(resultado.pontosConsumidos(), clienteFidelidade)
+                .ifPresent(movimentacao -> {
+                    clienteFidelidade.debitar(movimentacao.getPontos());
+                    movimentacaoPontosRepository.inserir(movimentacao);
+                    clienteRepository.atualizar(clienteFidelidade);
+                });
 
         return pedido.getId();
     }

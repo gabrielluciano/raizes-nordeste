@@ -575,6 +575,7 @@ class PedidoTest {
                 Id.aleatorio(),
                 null,
                 null,
+                null,
                 CanalPedido.APP,
                 false,
                 null,

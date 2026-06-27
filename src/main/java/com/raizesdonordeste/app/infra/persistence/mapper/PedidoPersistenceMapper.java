@@ -21,6 +21,7 @@ public class PedidoPersistenceMapper {
                 domain.getId().id(),
                 domain.getUnidadeId().id(),
                 Id.toUUID(domain.getClienteId()),
+                Id.toUUID(domain.getClienteFidelidadeId()),
                 Id.toUUID(domain.getFuncionarioId()),
                 domain.getNomeCliente(),
                 domain.getCanal().name(),
@@ -53,6 +54,7 @@ public class PedidoPersistenceMapper {
                 .id(new Id(entity.getId()))
                 .unidadeId(new Id(entity.getUnidadeId()))
                 .clienteId(Id.fromUUID(entity.getClienteId()))
+                .clienteFidelidadeId(Id.fromUUID(entity.getClienteFidelidadeId()))
                 .funcionarioId(Id.fromUUID(entity.getFuncionarioId()))
                 .nomeCliente(entity.getNomeCliente())
                 .canal(CanalPedido.valueOf(entity.getCanal()))

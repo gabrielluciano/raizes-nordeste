@@ -26,6 +26,7 @@ public class PedidoEntity {
     private UUID id;
     private UUID unidadeId;
     private UUID clienteId;
+    private UUID clienteFidelidadeId;
     private UUID funcionarioId;
     private String nomeCliente;
     private String canal;

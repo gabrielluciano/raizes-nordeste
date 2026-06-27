@@ -2,7 +2,6 @@ package com.raizesdonordeste.app.domain.pedido.services;
 
 import com.raizesdonordeste.app.domain.cardapio.model.Promocao;
 import com.raizesdonordeste.app.domain.comum.exception.ValidacaoException;
-import com.raizesdonordeste.app.domain.comum.model.Dinheiro;
 import com.raizesdonordeste.app.domain.comum.util.Guarda;
 import com.raizesdonordeste.app.domain.fidelidade.model.MovimentacaoPontos;
 import com.raizesdonordeste.app.domain.fidelidade.model.RegrasFidelidade;
@@ -28,10 +27,12 @@ public class PedidoService {
         validaHorarioPreparo(dados.horarioPreparo(), dados.unidade());
 
         Cliente cliente = dados.clienteVinculado();
+        Cliente clienteFidelidade = dados.clienteFidelidade();
 
         return Pedido.criar(
                 dados.unidade().getId(),
                 cliente != null ? cliente.getId() : null,
+                clienteFidelidade != null ? clienteFidelidade.getId() : null,
                 dados.funcionarioId(),
                 dados.nomeCliente(),
                 dados.canal(),
@@ -68,24 +69,27 @@ public class PedidoService {
         return pedido.calcularTotais(promocoes, regras, pontos, saldoPontos);
     }
 
-    public Optional<MovimentacaoPontos> calcularMovimentacaoPontos(long pontosConsumidos,
-                                                                   Cliente cliente,
-                                                                   Pedido pedido,
-                                                                   RegrasFidelidade regras,
-                                                                   Dinheiro valorFinal) {
-        // TODO: Lógica de debitar pedidos deve ser movida para após pagamento
-        if (pontosConsumidos == 0) {
-            if (pedido.isConsentimentoFidelizacao()) {
-                long acumulo = regras.acumuloPorCentavo()
-                        .multiply(BigDecimal.valueOf(valorFinal.centavos()))
-                        .setScale(0, RoundingMode.HALF_UP)
-                        .longValue();
-                return Optional.of(MovimentacaoPontos.acumulo(acumulo, cliente.getId(), now(), now().plusMonths(regras.validadePontosMeses())));
-            }
-        } else {
+    public Optional<MovimentacaoPontos> calcularResgate(long pontosConsumidos, Cliente cliente) {
+        if (pontosConsumidos > 0) {
             return Optional.of(MovimentacaoPontos.resgate(pontosConsumidos, cliente.getId(), now()));
         }
-
         return Optional.empty();
+    }
+
+    public Optional<MovimentacaoPontos> calcularAcumulo(Cliente cliente, Pedido pedido, RegrasFidelidade regras) {
+        if (cliente == null || !pedido.isConsentimentoFidelizacao()) {
+            return Optional.empty();
+        }
+
+        long acumulo = regras.acumuloPorCentavo()
+                .multiply(BigDecimal.valueOf(pedido.getValorFinal().centavos()))
+                .setScale(0, RoundingMode.HALF_UP)
+                .longValue();
+
+        if (acumulo <= 0) {
+            return Optional.empty();
+        }
+
+        return Optional.of(MovimentacaoPontos.acumulo(acumulo, cliente.getId(), now(), now().plusMonths(regras.validadePontosMeses())));
     }
 }
