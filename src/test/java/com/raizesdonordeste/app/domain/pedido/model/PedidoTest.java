@@ -467,6 +467,88 @@ class PedidoTest {
         assertThat(resultadoCalculo.pontosConsumidos()).isEqualTo(300);
     }
 
+    @Test
+    void devePermitirPagamento_QuandoStatusPagamentoPendente() {
+        Pedido pedido = criarPedido()
+                .status(StatusPedido.PAGAMENTO_PENDENTE)
+                .build();
+
+        assertThat(pedido.permitePagamento()).isTrue();
+    }
+
+    @Test
+    void naoDevePermitirPagamento_QuandoStatusNaoPendente() {
+        Pedido pedido = criarPedido()
+                .status(StatusPedido.AGUARDANDO_PREPARO)
+                .build();
+
+        assertThat(pedido.permitePagamento()).isFalse();
+    }
+
+    @Test
+    void deveAvancarParaAguardandoPreparo_QuandoStatusPagamentoPendente() {
+        Pedido pedido = criarPedido()
+                .status(StatusPedido.PAGAMENTO_PENDENTE)
+                .build();
+
+        pedido.avancarStatus();
+
+        assertThat(pedido.getStatus()).isEqualTo(StatusPedido.AGUARDANDO_PREPARO);
+    }
+
+    @Test
+    void deveAvancarParaEmPreparo_QuandoStatusAguardandoPreparo() {
+        Pedido pedido = criarPedido()
+                .status(StatusPedido.AGUARDANDO_PREPARO)
+                .build();
+
+        pedido.avancarStatus();
+
+        assertThat(pedido.getStatus()).isEqualTo(StatusPedido.EM_PREPARO);
+    }
+
+    @Test
+    void deveAvancarParaPronto_QuandoStatusEmPreparo() {
+        Pedido pedido = criarPedido()
+                .status(StatusPedido.EM_PREPARO)
+                .build();
+
+        pedido.avancarStatus();
+
+        assertThat(pedido.getStatus()).isEqualTo(StatusPedido.PRONTO);
+    }
+
+    @Test
+    void deveAvancarParaConcluido_QuandoStatusPronto() {
+        Pedido pedido = criarPedido()
+                .status(StatusPedido.PRONTO)
+                .build();
+
+        pedido.avancarStatus();
+
+        assertThat(pedido.getStatus()).isEqualTo(StatusPedido.CONCLUIDO);
+    }
+
+    @Test
+    void deveLancarExcecao_QuandoAvancarStatusConcluido() {
+        Pedido pedido = criarPedido()
+                .status(StatusPedido.CONCLUIDO)
+                .build();
+
+        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(pedido::avancarStatus)
+                .withMessage("pedido com status final não pode ter status alterado.");
+    }
+
+    @Test
+    void deveLancarExcecao_QuandoAvancarStatusCancelado() {
+        Pedido pedido = criarPedido()
+                .status(StatusPedido.CANCELADO)
+                .build();
+
+        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(pedido::avancarStatus)
+                .withMessage("pedido com status final não pode ter status alterado.");
+    }
+
     private Pedido.PedidoBuilder criarPedido() {
         return Pedido.builder()
                 .id(Id.aleatorio())

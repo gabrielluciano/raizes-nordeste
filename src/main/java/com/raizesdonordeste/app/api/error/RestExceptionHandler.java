@@ -2,6 +2,7 @@ package com.raizesdonordeste.app.api.error;
 
 import com.raizesdonordeste.app.domain.comum.exception.DominioException;
 import com.raizesdonordeste.app.domain.comum.exception.ValidacaoException;
+import com.raizesdonordeste.app.domain.identidade.exceptions.AcessoNegadoException;
 import com.raizesdonordeste.app.domain.identidade.exceptions.NaoAutorizadoException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -66,6 +67,12 @@ public class RestExceptionHandler {
     @ExceptionHandler(ValidacaoException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidacao(ValidacaoException ex, HttpServletRequest request) {
+        return ErrorResponse.of(ex.getCodigo(), ex.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(AcessoNegadoException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleAcessoNegado(AcessoNegadoException ex, HttpServletRequest request) {
         return ErrorResponse.of(ex.getCodigo(), ex.getMessage(), request.getRequestURI());
     }
 

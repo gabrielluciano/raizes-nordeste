@@ -29,4 +29,8 @@ public record Id(UUID id) {
         }
         return id.id;
     }
+
+    public static Id fromUUID(UUID id) {
+        return id == null ? null : new Id(id);
+    }
 }

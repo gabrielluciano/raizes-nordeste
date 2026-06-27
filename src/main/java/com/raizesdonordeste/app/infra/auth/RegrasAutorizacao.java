@@ -18,6 +18,10 @@ public class RegrasAutorizacao {
         return temQualquerRole(authentication, Role.CLIENTE, Role.GERENTE, Role.OPERADOR, Role.ADMINISTRADOR);
     }
 
+    public boolean podePagar(Authentication authentication) {
+        return temQualquerRole(authentication, Role.CLIENTE, Role.GERENTE, Role.OPERADOR, Role.ADMINISTRADOR);
+    }
+
     private boolean temRole(Authentication authentication, Role role) {
         return authentication.getAuthorities().stream()
                 .anyMatch(authority -> Objects.equals(authority.getAuthority(), "ROLE_" + role.name()));

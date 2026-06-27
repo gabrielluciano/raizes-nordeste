@@ -1,13 +1,11 @@
 package com.raizesdonordeste.app.domain.pedido.services;
 
-import com.raizesdonordeste.app.domain.comum.model.CPF;
-import com.raizesdonordeste.app.domain.comum.model.Dinheiro;
-import com.raizesdonordeste.app.domain.comum.model.Id;
-import com.raizesdonordeste.app.domain.comum.model.Telefone;
+import com.raizesdonordeste.app.domain.comum.model.*;
 import com.raizesdonordeste.app.domain.fidelidade.model.MovimentacaoPontos;
 import com.raizesdonordeste.app.domain.fidelidade.model.RegrasFidelidade;
 import com.raizesdonordeste.app.domain.fidelidade.model.TipoMovPontos;
 import com.raizesdonordeste.app.domain.identidade.model.Cliente;
+import com.raizesdonordeste.app.domain.organizacao.model.Unidade;
 import com.raizesdonordeste.app.domain.pedido.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -76,9 +74,10 @@ class PedidoServiceTest {
     }
 
     @Test
-    void deveIgnorarPontosDesejados_QuandoClienteNull() {
+    void deveIgnorarPontosDesejados_QuandoClienteFidelidadeNull() {
         DadosNovoPedido dados = criarDadosNovoPedido()
-                .cliente(null)
+                .clienteFidelidade(null)
+                .clienteVinculado(null)
                 .funcionarioId(Id.aleatorio())
                 .canal(CanalPedido.TOTEM)
                 .build();
@@ -150,7 +149,7 @@ class PedidoServiceTest {
         Cliente cliente = criarCliente().build();
         ItemPedido item = criarItemPedido().quantidade(2).precoUnitario(new Dinheiro(1000)).build();
         Pedido pedido = pedidoService.criarPedidoCompleto(
-                criarDadosNovoPedido().cliente(cliente).itens(List.of(item)).consentimentoFidelizacao(true).build());
+                criarDadosNovoPedido().clienteFidelidade(cliente).itens(List.of(item)).consentimentoFidelizacao(true).build());
         RegrasFidelidade regras = criarRegrasFidelidade().acumuloPorCentavo(BigDecimal.valueOf(0.1)).build();
         ResultadoCalculo resultado = pedidoService.calcularTotais(pedido, regras, Collections.emptySet(), cliente, 0);
         pedido.consolidarTotais(resultado);
@@ -163,18 +162,22 @@ class PedidoServiceTest {
         assertThat(movimentacao.get().getPontos()).isEqualTo(200); // 2000 centavos * 0.1
     }
 
-    // -- helpers --
-
     private Pedido criarPedidoConsolidado(Cliente cliente, boolean consentimento, int pontosDesejados) {
         return pedidoService.criarPedidoCompleto(
-                criarDadosNovoPedido().cliente(cliente).consentimentoFidelizacao(consentimento).build());
+                criarDadosNovoPedido().clienteFidelidade(cliente).consentimentoFidelizacao(consentimento).build());
     }
 
     private DadosNovoPedido.DadosNovoPedidoBuilder criarDadosNovoPedido() {
         return DadosNovoPedido.builder()
                 .id(Id.aleatorio())
-                .unidadeId(Id.aleatorio())
-                .cliente(criarCliente().build())
+                .unidade(criarUnidade().build())
+                .clienteFidelidade(criarCliente()
+                        .nome("Cliente Fidelidade")
+                        .cpf(new CPF("40397904053"))
+                        .build())
+                .clienteVinculado(criarCliente()
+                        .nome("Cliente Vinculado")
+                        .build())
                 .funcionarioId(null)
                 .nomeCliente("Cliente")
                 .canal(CanalPedido.APP)
@@ -216,5 +219,14 @@ class PedidoServiceTest {
                 .acumuloPorCentavo(BigDecimal.ONE)
                 .validadePontosMeses(6)
                 .tetoResgatePercentual(20);
+    }
+
+    private Unidade.UnidadeBuilder criarUnidade() {
+        return Unidade.builder()
+                .id(Id.aleatorio())
+                .nome("Unidade")
+                .endereco("Endereço")
+                .horarioFuncionamento(new Horario(10, 23))
+                .ativa(true);
     }
 }

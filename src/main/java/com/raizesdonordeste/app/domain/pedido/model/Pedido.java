@@ -25,7 +25,7 @@ public class Pedido {
     private final Id funcionarioId;
     private final String nomeCliente;
     private final CanalPedido canal;
-    private final StatusPedido status;
+    private StatusPedido status;
     private final boolean pickup;
     private final LocalDateTime horarioPreparo;
     private final LocalDateTime horarioPedido;
@@ -86,24 +86,24 @@ public class Pedido {
                                LocalDateTime horarioPedido,
                                boolean consentimentoFidelizacao,
                                List<ItemPedido> itens) {
-        return new Pedido(
-                Id.aleatorio(),
-                unidadeId,
-                clienteId,
-                funcionarioId,
-                nomeCliente,
-                canal,
-                StatusPedido.PAGAMENTO_PENDENTE,
-                pickup,
-                horarioPedido,
-                horarioPreparo,
-                consentimentoFidelizacao,
-                itens,
-                new Dinheiro(0),
-                new Dinheiro(0),
-                new Dinheiro(0),
-                new Dinheiro(0)
-        );
+        return Pedido.builder()
+                .id(Id.aleatorio())
+                .unidadeId(unidadeId)
+                .clienteId(clienteId)
+                .funcionarioId(funcionarioId)
+                .nomeCliente(nomeCliente)
+                .canal(canal)
+                .status(StatusPedido.PAGAMENTO_PENDENTE)
+                .pickup(pickup)
+                .horarioPedido(horarioPedido)
+                .horarioPreparo(horarioPreparo)
+                .consentimentoFidelizacao(consentimentoFidelizacao)
+                .itens(itens)
+                .valorTotal(new Dinheiro(0))
+                .valorDescontoPromocao(new Dinheiro(0))
+                .valorDescontoPontos(new Dinheiro(0))
+                .valorFinal(new Dinheiro(0))
+                .build();
     }
 
     private void validarIdentificacaoCliente(Id clienteId, String nomeCliente, CanalPedido canal) {
@@ -207,5 +207,23 @@ public class Pedido {
         this.valorDescontoPromocao = resultado.valorDescontoPromocional();
         this.valorDescontoPontos = resultado.valorDescontoPontos();
         this.valorFinal = resultado.valorFinal();
+    }
+
+    public boolean permitePagamento() {
+        return StatusPedido.PAGAMENTO_PENDENTE.equals(status);
+    }
+
+    public void avancarStatus() {
+        if (StatusPedido.STATUS_FINAIS.contains(status)) {
+            throw new IllegalStateException("pedido com status final não pode ter status alterado.");
+        }
+
+        status = switch (status) {
+            case PAGAMENTO_PENDENTE -> StatusPedido.AGUARDANDO_PREPARO;
+            case AGUARDANDO_PREPARO -> StatusPedido.EM_PREPARO;
+            case EM_PREPARO -> StatusPedido.PRONTO;
+            case PRONTO, CONCLUIDO -> StatusPedido.CONCLUIDO;
+            case CANCELADO -> StatusPedido.CANCELADO;
+        };
     }
 }

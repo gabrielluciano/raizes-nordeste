@@ -50,7 +50,7 @@ public class SecurityConfig {
                                 .decoder(jwtDecoder)
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter)))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/signup").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/signup", "/webhooks/pagamentos/pix").permitAll()
                         .anyRequest().authenticated())
                 .build();
     }

@@ -141,6 +141,38 @@ CREATE TABLE raizesnordeste.itens_pedido
 
 CREATE INDEX idx_itens_pedido_pedido_id ON raizesnordeste.itens_pedido (pedido_id);
 
+CREATE TABLE raizesnordeste.pagamentos
+(
+    id                   UUID PRIMARY KEY,
+    pedido_id            UUID        NOT NULL REFERENCES raizesnordeste.pedidos (id),
+    idempotency_key      VARCHAR(255),
+    forma                VARCHAR(20) NOT NULL,
+    status               VARCHAR(20) NOT NULL,
+    valor_centavos       BIGINT      NOT NULL,
+    id_transacao_gateway VARCHAR(255),
+    data_solicitacao     TIMESTAMP   NOT NULL,
+    data_confirmacao     TIMESTAMP,
+    motivo_recusa        VARCHAR(255),
+    qr_code              TEXT,
+    qr_code_valido_ate   TIMESTAMP,
+
+    CONSTRAINT chk_pagamentos_forma
+        CHECK (forma IN ('PIX', 'CARTAO_CREDITO', 'CARTAO_DEBITO')),
+
+    CONSTRAINT chk_pagamentos_status
+        CHECK (status IN ('PENDENTE', 'APROVADO', 'RECUSADO', 'ERRO'))
+);
+
+CREATE INDEX idx_pagamentos_pedido_id ON raizesnordeste.pagamentos (pedido_id);
+
+CREATE UNIQUE INDEX idx_pagamentos_id_transacao_gateway
+    ON raizesnordeste.pagamentos (id_transacao_gateway)
+    WHERE id_transacao_gateway IS NOT NULL;
+
+CREATE UNIQUE INDEX idx_pagamentos_idempotency_key
+    ON raizesnordeste.pagamentos (idempotency_key)
+    WHERE idempotency_key IS NOT NULL;
+
 CREATE TABLE raizesnordeste.refresh_tokens
 (
     id          UUID PRIMARY KEY,
