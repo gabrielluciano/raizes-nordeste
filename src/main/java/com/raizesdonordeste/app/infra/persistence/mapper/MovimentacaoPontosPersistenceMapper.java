@@ -1,6 +1,8 @@
 package com.raizesdonordeste.app.infra.persistence.mapper;
 
+import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.fidelidade.model.MovimentacaoPontos;
+import com.raizesdonordeste.app.domain.fidelidade.model.TipoMovPontos;
 import com.raizesdonordeste.app.infra.persistence.entity.MovimentacaoPontosEntity;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +17,17 @@ public class MovimentacaoPontosPersistenceMapper {
                 domain.pontos(),
                 domain.dataContabilizacao(),
                 domain.dataExpiracao()
+        );
+    }
+
+    public MovimentacaoPontos toDomain(MovimentacaoPontosEntity entity) {
+        return new MovimentacaoPontos(
+                Id.fromUUID(entity.getId()),
+                Id.fromUUID(entity.getClienteId()),
+                TipoMovPontos.valueOf(entity.getTipo()),
+                entity.getPontos(),
+                entity.getDataContabilizacao(),
+                entity.getDataExpiracao()
         );
     }
 }
