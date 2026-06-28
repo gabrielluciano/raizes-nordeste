@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/fidelidade")
+@RequestMapping("fidelidade")
 @RequiredArgsConstructor
 public class FidelidadeResource {
 
     private final ObterExtratoFidelidadeUseCase obterExtratoFidelidadeUseCase;
     private final ExtratoFidelidadeResponseMapper extratoFidelidadeResponseMapper;
 
-    @GetMapping("/extrato")
+    @GetMapping("extrato")
     @PreAuthorize("@regrasAutorizacao.podeConsultarFidelidade(authentication)")
     public ResponseEntity<ExtratoFidelidadeResponse> obterExtrato(JwtAuthenticationToken authentication) {
         Jwt jwt = authentication.getToken();

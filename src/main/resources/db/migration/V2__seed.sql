@@ -5,6 +5,12 @@ VALUES ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Unidade Volta Redonda', 'Rua 33
         TRUE)
 ON CONFLICT (id) DO NOTHING;
 
+INSERT INTO raizesnordeste.unidades (id, nome, endereco, hora_de, hora_ate, ativa)
+VALUES ('5f1e713c-c934-4f2f-928f-21a4101a50d5', 'Unidade Rio de Janeiro',
+        'Rua ABC, Copacabana, 23, Rio de Janeiro - RJ', 8, 20,
+        TRUE)
+ON CONFLICT (id) DO NOTHING;
+
 INSERT INTO raizesnordeste.pratos (id, unidade_id, nome, descricao, preco_centavos, disponivel, ativo)
 VALUES ('581fd7ef-56d3-4ac4-832b-b8953c3736fb',
         'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
@@ -21,6 +27,26 @@ VALUES ('a737a7e6-c0fe-4e19-9f56-8d02edf6b99d',
         'Carne de Sol com Macaxeira',
         'A combinação perfeita entre o salgadinho da carne e a textura macia e adocicada da mandioca cozida ou frita agrada a diversos paladares.',
         4160,
+        TRUE,
+        TRUE)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO raizesnordeste.pratos (id, unidade_id, nome, descricao, preco_centavos, disponivel, ativo)
+VALUES ('a9365c78-449f-4b0f-b6d8-431441eb70d2',
+        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        'Bobó de Camarão',
+        'Um prato sofisticado e reconfortante feito à base de mandioca (aipim) cremosa, leite de coco, azeite de dendê e camarões frescos.',
+        4060,
+        FALSE,
+        TRUE)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO raizesnordeste.pratos (id, unidade_id, nome, descricao, preco_centavos, disponivel, ativo)
+VALUES ('f37c6145-b7c1-4a11-b817-235fca59d369',
+        '5f1e713c-c934-4f2f-928f-21a4101a50d5',
+        'Vatapá',
+        'Uma iguaria cremosa e consistente, que lembra um purê ou pirão grosso.',
+        1050,
         TRUE,
         TRUE)
 ON CONFLICT (id) DO NOTHING;

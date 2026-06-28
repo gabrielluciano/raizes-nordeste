@@ -51,6 +51,7 @@ public class SecurityConfig {
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter)))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/signup", "/webhooks/pagamentos/pix").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/unidades/{unidadeId}/cardapio").permitAll()
                         .anyRequest().authenticated())
                 .build();
     }

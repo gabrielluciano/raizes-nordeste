@@ -25,7 +25,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/pedidos")
+@RequestMapping("pedidos")
 @RequiredArgsConstructor
 public class PedidoResource {
 
@@ -68,7 +68,7 @@ public class PedidoResource {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PatchMapping("/{id}/avancar")
+    @PatchMapping("{id}/avancar")
     @PreAuthorize("@regrasAutorizacao.podeAvancarStatusPedido(authentication)")
     public ResponseEntity<AvancarStatusPedidoResponse> avancarStatusPedido(@PathVariable String id,
                                                                            JwtAuthenticationToken authentication) {

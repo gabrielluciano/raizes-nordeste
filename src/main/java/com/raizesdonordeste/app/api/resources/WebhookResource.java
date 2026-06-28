@@ -16,7 +16,7 @@ import java.security.MessageDigest;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @RestController
-@RequestMapping("/webhooks")
+@RequestMapping("webhooks")
 public class WebhookResource {
 
     private final String webhookSecret;
