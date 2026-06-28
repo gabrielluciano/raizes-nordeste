@@ -1,5 +1,9 @@
 package com.raizesdonordeste.app.application.usecases;
 
+import com.raizesdonordeste.app.application.services.AuditoriaService;
+import com.raizesdonordeste.app.domain.auditoria.model.AtorTipo;
+import com.raizesdonordeste.app.domain.auditoria.model.EventoAuditoria;
+import com.raizesdonordeste.app.domain.auditoria.model.RegistroAuditoria;
 import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.fidelidade.model.RegrasFidelidade;
 import com.raizesdonordeste.app.domain.fidelidade.repository.MovimentacaoPontosRepository;
@@ -14,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class FidelidadeUseCase implements CasoDeUso<Id, Void> {
@@ -22,6 +28,7 @@ public class FidelidadeUseCase implements CasoDeUso<Id, Void> {
     private final MovimentacaoPontosRepository movimentacaoPontosRepository;
     private final ClienteRepository clienteRepository;
     private final PedidoRepository pedidoRepository;
+    private final AuditoriaService auditoriaService;
     private final PedidoService pedidoService = new PedidoService();
 
     @Override
@@ -44,6 +51,18 @@ public class FidelidadeUseCase implements CasoDeUso<Id, Void> {
                     cliente.creditar(movimentacao.pontos());
                     movimentacaoPontosRepository.inserir(movimentacao);
                     clienteRepository.atualizar(cliente);
+
+                    auditoriaService.registrar(RegistroAuditoria.criar(
+                            AtorTipo.SISTEMA,
+                            null,
+                            EventoAuditoria.PONTOS_ACUMULADOS,
+                            "Cliente",
+                            cliente.getId().toString(),
+                            Map.of(
+                                    "pedidoId", pedido.getId().toString(),
+                                    "pontos", String.valueOf(movimentacao.pontos())
+                            )
+                    ));
                 });
 
         return null;

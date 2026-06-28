@@ -1,5 +1,9 @@
 package com.raizesdonordeste.app.application.usecases;
 
+import com.raizesdonordeste.app.application.services.AuditoriaService;
+import com.raizesdonordeste.app.domain.auditoria.model.AtorTipo;
+import com.raizesdonordeste.app.domain.auditoria.model.EventoAuditoria;
+import com.raizesdonordeste.app.domain.auditoria.model.RegistroAuditoria;
 import com.raizesdonordeste.app.domain.comum.exception.ValidacaoException;
 import com.raizesdonordeste.app.domain.comum.model.Email;
 import com.raizesdonordeste.app.domain.comum.model.Id;
@@ -16,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class CadastroFuncionarioUseCase implements CasoDeUso<CadastrarFuncionarioComando, Id> {
@@ -24,6 +30,7 @@ public class CadastroFuncionarioUseCase implements CasoDeUso<CadastrarFuncionari
     private final UnidadeRepository unidadeRepository;
     private final ContaRepository contaRepository;
     private final SenhaHasher senhaHasher;
+    private final AuditoriaService auditoriaService;
 
     @Override
     @Transactional
@@ -57,6 +64,19 @@ public class CadastroFuncionarioUseCase implements CasoDeUso<CadastrarFuncionari
 
         contaRepository.inserir(conta);
         funcionarioRepository.inserir(funcionario);
+
+        auditoriaService.registrar(RegistroAuditoria.criar(
+                AtorTipo.FUNCIONARIO,
+                null,
+                EventoAuditoria.FUNCIONARIO_CADASTRADO,
+                "Funcionario",
+                funcionario.id().toString(),
+                Map.of(
+                        "email", comando.email(),
+                        "role", comando.role().name(),
+                        "unidadeId", comando.unidadeId().toString()
+                )
+        ));
 
         return funcionario.id();
     }

@@ -1,5 +1,9 @@
 package com.raizesdonordeste.app.application.usecases;
 
+import com.raizesdonordeste.app.application.services.AuditoriaService;
+import com.raizesdonordeste.app.domain.auditoria.model.AtorTipo;
+import com.raizesdonordeste.app.domain.auditoria.model.EventoAuditoria;
+import com.raizesdonordeste.app.domain.auditoria.model.RegistroAuditoria;
 import com.raizesdonordeste.app.domain.identidade.exceptions.AcessoNegadoException;
 import com.raizesdonordeste.app.domain.identidade.exceptions.FuncionarioNaoEncontradoException;
 import com.raizesdonordeste.app.domain.identidade.model.Funcionario;
@@ -13,6 +17,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -21,6 +26,7 @@ public class AvancarStatusPedidoUseCase implements CasoDeUso<AvancarStatusPedido
 
     private final PedidoRepository pedidoRepository;
     private final FuncionarioRepository funcionarioRepository;
+    private final AuditoriaService auditoriaService;
 
     @Override
     @Transactional
@@ -38,6 +44,15 @@ public class AvancarStatusPedidoUseCase implements CasoDeUso<AvancarStatusPedido
 
         pedido.avancarStatus();
         pedidoRepository.atualizar(pedido);
+
+        auditoriaService.registrar(RegistroAuditoria.criar(
+                AtorTipo.FUNCIONARIO,
+                funcionario.id().toString(),
+                EventoAuditoria.PEDIDO_STATUS_AVANCADO,
+                "Pedido",
+                pedido.getId().toString(),
+                Map.of("novoStatus", pedido.getStatus().name())
+        ));
 
         return pedido.getStatus();
     }

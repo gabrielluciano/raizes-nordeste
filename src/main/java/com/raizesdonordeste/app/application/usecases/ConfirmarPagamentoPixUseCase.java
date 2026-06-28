@@ -1,5 +1,9 @@
 package com.raizesdonordeste.app.application.usecases;
 
+import com.raizesdonordeste.app.application.services.AuditoriaService;
+import com.raizesdonordeste.app.domain.auditoria.model.AtorTipo;
+import com.raizesdonordeste.app.domain.auditoria.model.EventoAuditoria;
+import com.raizesdonordeste.app.domain.auditoria.model.RegistroAuditoria;
 import com.raizesdonordeste.app.domain.comum.exception.ValidacaoException;
 import com.raizesdonordeste.app.domain.pagamento.exception.PagamentoNaoEncontradoException;
 import com.raizesdonordeste.app.domain.pagamento.model.ConfirmarPagamentoPixComando;
@@ -12,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -20,6 +26,7 @@ public class ConfirmarPagamentoPixUseCase implements CasoDeUso<ConfirmarPagament
     private final PagamentoRepository pagamentoRepository;
     private final PedidoRepository pedidoRepository;
     private final FidelidadeUseCase fidelidadeUseCase;
+    private final AuditoriaService auditoriaService;
 
     @Override
     public ResultadoConfirmacaoPix executar(ConfirmarPagamentoPixComando comando) {
@@ -44,6 +51,18 @@ public class ConfirmarPagamentoPixUseCase implements CasoDeUso<ConfirmarPagament
         pagamentoRepository.atualizar(pagamento);
         pedidoRepository.atualizar(pedido);
         fidelidadeUseCase.executar(pedido.getId());
+
+        auditoriaService.registrar(RegistroAuditoria.criar(
+                AtorTipo.SISTEMA,
+                null,
+                EventoAuditoria.PAGAMENTO_PIX_CONFIRMADO,
+                "Pagamento",
+                pagamento.getId().toString(),
+                Map.of(
+                        "pedidoId", pedido.getId().toString(),
+                        "transacaoId", comando.transacaoId()
+                )
+        ));
 
         return criarResultado(pagamento);
     }

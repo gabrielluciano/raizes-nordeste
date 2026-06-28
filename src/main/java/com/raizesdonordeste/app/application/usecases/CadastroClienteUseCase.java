@@ -1,5 +1,9 @@
 package com.raizesdonordeste.app.application.usecases;
 
+import com.raizesdonordeste.app.application.services.AuditoriaService;
+import com.raizesdonordeste.app.domain.auditoria.model.AtorTipo;
+import com.raizesdonordeste.app.domain.auditoria.model.EventoAuditoria;
+import com.raizesdonordeste.app.domain.auditoria.model.RegistroAuditoria;
 import com.raizesdonordeste.app.domain.comum.model.Email;
 import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.identidade.exceptions.ContaJaCadastradaException;
@@ -14,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class CadastroClienteUseCase implements CasoDeUso<CadastrarClienteComando, Id> {
@@ -21,6 +27,7 @@ public class CadastroClienteUseCase implements CasoDeUso<CadastrarClienteComando
     private final ClienteRepository clienteRepository;
     private final ContaRepository contaRepository;
     private final SenhaHasher senhaHasher;
+    private final AuditoriaService auditoriaService;
 
     @Override
     @Transactional
@@ -47,6 +54,18 @@ public class CadastroClienteUseCase implements CasoDeUso<CadastrarClienteComando
 
         contaRepository.inserir(conta);
         clienteRepository.inserir(cliente);
+
+        auditoriaService.registrar(RegistroAuditoria.criar(
+                AtorTipo.CLIENTE,
+                conta.getId().toString(),
+                EventoAuditoria.CLIENTE_CADASTRADO,
+                "Cliente",
+                cliente.getId().toString(),
+                Map.of(
+                        "email", comando.email(),
+                        "versaoAceiteTermos", String.valueOf(comando.versaoAceiteTermos())
+                )
+        ));
 
         return cliente.getId();
     }

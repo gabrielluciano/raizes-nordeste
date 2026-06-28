@@ -1,5 +1,9 @@
 package com.raizesdonordeste.app.application.usecases;
 
+import com.raizesdonordeste.app.application.services.AuditoriaService;
+import com.raizesdonordeste.app.domain.auditoria.model.AtorTipo;
+import com.raizesdonordeste.app.domain.auditoria.model.EventoAuditoria;
+import com.raizesdonordeste.app.domain.auditoria.model.RegistroAuditoria;
 import com.raizesdonordeste.app.domain.cardapio.exceptions.PratoInativoException;
 import com.raizesdonordeste.app.domain.cardapio.exceptions.PratoNaoEncontradoException;
 import com.raizesdonordeste.app.domain.cardapio.model.Prato;
@@ -47,6 +51,7 @@ public class CriarPedidoUseCase implements CasoDeUso<CriarPedidoComando, Id> {
     private final UnidadeRepository unidadeRepository;
     private final PedidoRepository pedidoRepository;
     private final MovimentacaoPontosRepository movimentacaoPontosRepository;
+    private final AuditoriaService auditoriaService;
 
     @Override
     @Transactional
@@ -89,6 +94,20 @@ public class CriarPedidoUseCase implements CasoDeUso<CriarPedidoComando, Id> {
                     movimentacaoPontosRepository.inserir(movimentacao);
                     clienteRepository.atualizar(clienteFidelidade);
                 });
+
+        auditoriaService.registrar(RegistroAuditoria.criar(
+                Role.isCliente(comando.role()) ? AtorTipo.CLIENTE : AtorTipo.FUNCIONARIO,
+                comando.contaId().toString(),
+                EventoAuditoria.PEDIDO_CRIADO,
+                "Pedido",
+                pedido.getId().toString(),
+                Map.of(
+                        "unidadeId", identidade.unidadeId().toString(),
+                        "canal", comando.canal().name(),
+                        "valorFinal", String.valueOf(pedido.getValorFinal().centavos()),
+                        "pontosConsumidos", String.valueOf(resultado.pontosConsumidos())
+                )
+        ));
 
         return pedido.getId();
     }

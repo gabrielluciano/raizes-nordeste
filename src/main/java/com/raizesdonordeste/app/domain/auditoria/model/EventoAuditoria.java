@@ -1,0 +1,22 @@
+package com.raizesdonordeste.app.domain.auditoria.model;
+
+public enum EventoAuditoria {
+
+    LOGIN_SUCESSO,
+    LOGIN_FALHA,
+
+    CLIENTE_CADASTRADO,
+    FUNCIONARIO_CADASTRADO,
+
+    PEDIDO_CRIADO,
+    PEDIDO_STATUS_AVANCADO,
+
+    PAGAMENTO_APROVADO,
+    PAGAMENTO_RECUSADO,
+    PAGAMENTO_ERRO,
+    PAGAMENTO_PIX_INICIADO,
+    PAGAMENTO_PIX_ERRO,
+    PAGAMENTO_PIX_CONFIRMADO,
+
+    PONTOS_ACUMULADOS
+}
