@@ -169,7 +169,7 @@ public class Pedido {
         Dinheiro descontoPromocional = new Dinheiro(0);
         for (ItemPedido item : this.itensPedido) {
             Dinheiro subtotal = item.calcularSubtotal();
-            Id pratoId = item.getPratoId();
+            Id pratoId = item.pratoId();
 
             Dinheiro descontoPromocionalItem = promocoes.stream()
                     .filter(promocao -> promocao.aplicaAoPrato(pratoId))

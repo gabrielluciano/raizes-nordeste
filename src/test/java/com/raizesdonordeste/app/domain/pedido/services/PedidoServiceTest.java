@@ -111,7 +111,7 @@ class PedidoServiceTest {
         Optional<MovimentacaoPontos> movimentacao = pedidoService.calcularAcumulo(cliente, pedido, regras);
 
         assertThat(movimentacao).isPresent();
-        assertThat(movimentacao.get().getTipo()).isEqualTo(TipoMovPontos.ACUMULO);
+        assertThat(movimentacao.get().tipo()).isEqualTo(TipoMovPontos.ACUMULO);
     }
 
     @Test
@@ -125,7 +125,7 @@ class PedidoServiceTest {
         Optional<MovimentacaoPontos> movimentacao = pedidoService.calcularResgate(resultado.pontosConsumidos(), cliente);
 
         assertThat(movimentacao).isPresent();
-        assertThat(movimentacao.get().getTipo()).isEqualTo(TipoMovPontos.RESGATE);
+        assertThat(movimentacao.get().tipo()).isEqualTo(TipoMovPontos.RESGATE);
     }
 
     @Test
@@ -153,8 +153,8 @@ class PedidoServiceTest {
         Optional<MovimentacaoPontos> movimentacao = pedidoService.calcularAcumulo(cliente, pedido, regras);
 
         assertThat(movimentacao).isPresent();
-        assertThat(movimentacao.get().getTipo()).isEqualTo(TipoMovPontos.ACUMULO);
-        assertThat(movimentacao.get().getPontos()).isEqualTo(200); // 2000 centavos * 0.1
+        assertThat(movimentacao.get().tipo()).isEqualTo(TipoMovPontos.ACUMULO);
+        assertThat(movimentacao.get().pontos()).isEqualTo(200); // 2000 centavos * 0.1
     }
 
     private Pedido criarPedidoConsolidado(Cliente cliente, boolean consentimento, int pontosDesejados) {

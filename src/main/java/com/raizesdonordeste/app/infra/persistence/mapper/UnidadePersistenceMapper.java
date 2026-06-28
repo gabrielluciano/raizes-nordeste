@@ -11,12 +11,12 @@ public class UnidadePersistenceMapper {
 
     public UnidadeEntity toEntity(Unidade unidade) {
         return new UnidadeEntity(
-                unidade.getId().id(),
-                unidade.getNome(),
-                unidade.getEndereco(),
-                unidade.getHorarioFuncionamento().horaDe(),
-                unidade.getHorarioFuncionamento().horaAte(),
-                unidade.isAtiva()
+                unidade.id().id(),
+                unidade.nome(),
+                unidade.endereco(),
+                unidade.horarioFuncionamento().horaDe(),
+                unidade.horarioFuncionamento().horaAte(),
+                unidade.ativa()
         );
     }
 

@@ -52,7 +52,7 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO raizesnordeste.regras_fidelidade (id, valor_por_ponto, acumulo_por_centavo, validade_pontos_meses,
                                               teto_resgate_percentual, ativa, ativada_em)
 VALUES ('78d36ce1-d755-4f1c-95ae-f941ed5df80c',
-        0.010000,
+        1.000000,
         0.020000,
         6,
         20,

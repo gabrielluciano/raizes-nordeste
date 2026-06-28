@@ -41,7 +41,7 @@ public class FidelidadeUseCase implements CasoDeUso<Id, Void> {
 
         pedidoService.calcularAcumulo(cliente, pedido, regras)
                 .ifPresent(movimentacao -> {
-                    cliente.creditar(movimentacao.getPontos());
+                    cliente.creditar(movimentacao.pontos());
                     movimentacaoPontosRepository.inserir(movimentacao);
                     clienteRepository.atualizar(cliente);
                 });

@@ -5,15 +5,8 @@ import com.raizesdonordeste.app.domain.comum.model.Dinheiro;
 import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.comum.util.Guarda;
 import lombok.Builder;
-import lombok.Getter;
 
-@Getter
-public class ItemPedido {
-
-    private final Id id;
-    private final Id pratoId;
-    private final int quantidade;
-    private final Dinheiro precoUnitario;
+public record ItemPedido(Id id, Id pratoId, int quantidade, Dinheiro precoUnitario) {
 
     @Builder
     public ItemPedido(Id id, Id pratoId, int quantidade, Dinheiro precoUnitario) {

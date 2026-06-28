@@ -68,7 +68,7 @@ public abstract class AbstractPagamentoUseCase<OUTPUT> implements CasoDeUso<Paga
             Funcionario funcionario = funcionarioRepository.obterPorContaId(comando.contaId())
                     .orElseThrow(() -> new FuncionarioNaoEncontradoException(comando.contaId()));
 
-            if (!Objects.equals(funcionario.getUnidadeId(), pedido.getUnidadeId())) {
+            if (!Objects.equals(funcionario.unidadeId(), pedido.getUnidadeId())) {
                 throw new AcessoNegadoException("funcionário solicitante não pertence a unidade do pedido");
             }
         }

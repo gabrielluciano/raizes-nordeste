@@ -12,14 +12,14 @@ import java.time.LocalDateTime;
 @Getter
 public class Pagamento {
 
-    private Id id;
-    private Id pedidoId;
-    private String idempotencyKey;
-    private FormaPagamento forma;
+    private final Id id;
+    private final Id pedidoId;
+    private final String idempotencyKey;
+    private final FormaPagamento forma;
     private StatusPagamento status;
-    private Dinheiro valor;
+    private final Dinheiro valor;
     private String idTransacaoGateway;
-    private LocalDateTime dataSolicitacao;
+    private final LocalDateTime dataSolicitacao;
     private LocalDateTime dataConfirmacao;
     private String motivoRecusa;
     private String qrCode;

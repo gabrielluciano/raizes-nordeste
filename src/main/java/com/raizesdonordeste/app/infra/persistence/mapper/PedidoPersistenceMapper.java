@@ -40,11 +40,11 @@ public class PedidoPersistenceMapper {
     public List<ItemPedidoEntity> toItemEntities(List<ItemPedido> itens, UUID pedidoId) {
         return itens.stream()
                 .map(item -> new ItemPedidoEntity(
-                        item.getId().id(),
+                        item.id().id(),
                         pedidoId,
-                        item.getPratoId().id(),
-                        item.getQuantidade(),
-                        item.getPrecoUnitario().centavos()
+                        item.pratoId().id(),
+                        item.quantidade(),
+                        item.precoUnitario().centavos()
                 ))
                 .toList();
     }

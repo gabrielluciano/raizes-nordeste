@@ -30,7 +30,7 @@ public class PedidoService {
         Cliente clienteFidelidade = dados.clienteFidelidade();
 
         return Pedido.criar(
-                dados.unidade().getId(),
+                dados.unidade().id(),
                 cliente != null ? cliente.getId() : null,
                 clienteFidelidade != null ? clienteFidelidade.getId() : null,
                 dados.funcionarioId(),

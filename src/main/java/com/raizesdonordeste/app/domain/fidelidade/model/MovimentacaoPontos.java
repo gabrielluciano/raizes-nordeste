@@ -3,19 +3,11 @@ package com.raizesdonordeste.app.domain.fidelidade.model;
 import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.comum.util.Guarda;
 import lombok.Builder;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Getter
-public class MovimentacaoPontos {
-
-    private final Id id;
-    private final Id clienteId;
-    private final TipoMovPontos tipo;
-    private final long pontos;
-    private final LocalDateTime dataContabilizacao;
-    private final LocalDateTime dataExpiracao;
+public record MovimentacaoPontos(Id id, Id clienteId, TipoMovPontos tipo, long pontos, LocalDateTime dataContabilizacao,
+                                 LocalDateTime dataExpiracao) {
 
     @Builder
     public MovimentacaoPontos(

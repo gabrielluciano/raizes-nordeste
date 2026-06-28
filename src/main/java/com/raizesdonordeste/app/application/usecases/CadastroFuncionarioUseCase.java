@@ -58,6 +58,6 @@ public class CadastroFuncionarioUseCase implements CasoDeUso<CadastrarFuncionari
         contaRepository.inserir(conta);
         funcionarioRepository.inserir(funcionario);
 
-        return funcionario.getId();
+        return funcionario.id();
     }
 }

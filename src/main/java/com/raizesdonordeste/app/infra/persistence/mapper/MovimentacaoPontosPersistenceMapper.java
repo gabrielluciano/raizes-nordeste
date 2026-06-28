@@ -9,12 +9,12 @@ public class MovimentacaoPontosPersistenceMapper {
 
     public MovimentacaoPontosEntity toEntity(MovimentacaoPontos domain) {
         return new MovimentacaoPontosEntity(
-                domain.getId().id(),
-                domain.getClienteId().id(),
-                domain.getTipo().name(),
-                domain.getPontos(),
-                domain.getDataContabilizacao(),
-                domain.getDataExpiracao()
+                domain.id().id(),
+                domain.clienteId().id(),
+                domain.tipo().name(),
+                domain.pontos(),
+                domain.dataContabilizacao(),
+                domain.dataExpiracao()
         );
     }
 }

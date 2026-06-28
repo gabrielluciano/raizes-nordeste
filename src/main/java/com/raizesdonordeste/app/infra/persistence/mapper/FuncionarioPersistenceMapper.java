@@ -11,13 +11,13 @@ public class FuncionarioPersistenceMapper {
 
     public FuncionarioEntity toEntity(Funcionario funcionario) {
         return new FuncionarioEntity(
-                funcionario.getId().id(),
-                funcionario.getContaId().id(),
-                funcionario.getUnidadeId().id(),
-                funcionario.getNome(),
-                funcionario.getTelefone().valor(),
-                funcionario.getEndereco(),
-                funcionario.getDataNascimento()
+                funcionario.id().id(),
+                funcionario.contaId().id(),
+                funcionario.unidadeId().id(),
+                funcionario.nome(),
+                funcionario.telefone().valor(),
+                funcionario.endereco(),
+                funcionario.dataNascimento()
         );
     }
 

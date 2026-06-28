@@ -270,7 +270,7 @@ class PedidoTest {
                 .precoUnitario(new Dinheiro(1000))
                 .build();
         Promocao promocao = criarPromocao()
-                .pratoId(itemPedido.getPratoId())
+                .pratoId(itemPedido.pratoId())
                 .percentualDesconto(20)
                 .build();
 
@@ -316,11 +316,11 @@ class PedidoTest {
                 .precoUnitario(new Dinheiro(2000))
                 .build();
         Promocao promocaoMenor = criarPromocao()
-                .pratoId(itemPedido.getPratoId())
+                .pratoId(itemPedido.pratoId())
                 .percentualDesconto(5)
                 .build();
         Promocao promocaoMaior = criarPromocao()
-                .pratoId(itemPedido.getPratoId())
+                .pratoId(itemPedido.pratoId())
                 .percentualDesconto(10)
                 .build();
 
@@ -441,11 +441,11 @@ class PedidoTest {
                 .build();
         Pedido pedido = criar(List.of(item1, item2));
         Promocao promo1 = criarPromocao()
-                .pratoId(item1.getPratoId())
+                .pratoId(item1.pratoId())
                 .percentualDesconto(1)
                 .build();
         Promocao promo2 = criarPromocao()
-                .pratoId(item2.getPratoId())
+                .pratoId(item2.pratoId())
                 .percentualDesconto(5)
                 .build();
         Promocao promo3 = criarPromocao()

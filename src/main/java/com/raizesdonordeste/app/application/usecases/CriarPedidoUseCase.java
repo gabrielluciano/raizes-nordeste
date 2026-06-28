@@ -85,7 +85,7 @@ public class CriarPedidoUseCase implements CasoDeUso<CriarPedidoComando, Id> {
 
         pedidoService.calcularResgate(resultado.pontosConsumidos(), clienteFidelidade)
                 .ifPresent(movimentacao -> {
-                    clienteFidelidade.debitar(movimentacao.getPontos());
+                    clienteFidelidade.debitar(movimentacao.pontos());
                     movimentacaoPontosRepository.inserir(movimentacao);
                     clienteRepository.atualizar(clienteFidelidade);
                 });
@@ -107,7 +107,7 @@ public class CriarPedidoUseCase implements CasoDeUso<CriarPedidoComando, Id> {
         if (Role.isFuncionario(comando.role())) {
             Funcionario funcionario = funcionarioRepository.obterPorContaId(comando.contaId())
                     .orElseThrow(() -> new IllegalStateException("funcionário não encontrado para a conta '%s'.".formatted(comando.contaId())));
-            return new Identidade(null, funcionario.getId(), funcionario.getUnidadeId());
+            return new Identidade(null, funcionario.id(), funcionario.unidadeId());
         }
 
         throw new IllegalStateException("role inválida recebida");
@@ -171,7 +171,7 @@ public class CriarPedidoUseCase implements CasoDeUso<CriarPedidoComando, Id> {
     }
 
     private Set<Promocao> obterPromocoes(List<ItemPedido> itens) {
-        Set<Id> pratoIds = itens.stream().map(ItemPedido::getPratoId).collect(Collectors.toSet());
+        Set<Id> pratoIds = itens.stream().map(ItemPedido::pratoId).collect(Collectors.toSet());
         return promocaoRepository.obterPromocoesAtivasParaPratos(pratoIds);
     }
 
