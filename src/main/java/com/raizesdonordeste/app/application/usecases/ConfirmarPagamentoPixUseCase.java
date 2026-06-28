@@ -39,7 +39,7 @@ public class ConfirmarPagamentoPixUseCase implements CasoDeUso<ConfirmarPagament
 
         Pedido pedido = pedidoRepository.obterPorId(pagamento.getPedidoId())
                 .orElseThrow(() -> new IllegalStateException("pagamento referencia um pedido não existente!"));
-        pedido.avancarStatus();
+        pedido.confirmarPagamento();
 
         pagamentoRepository.atualizar(pagamento);
         pedidoRepository.atualizar(pedido);

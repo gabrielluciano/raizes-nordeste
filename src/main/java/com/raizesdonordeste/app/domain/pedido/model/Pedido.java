@@ -218,17 +218,27 @@ public class Pedido {
         return StatusPedido.PAGAMENTO_PENDENTE.equals(status);
     }
 
+    public void confirmarPagamento() {
+        if (!StatusPedido.PAGAMENTO_PENDENTE.equals(status)) {
+            throw new ValidacaoException("pagamento só pode ser confirmado enquanto o pedido está em PAGAMENTO_PENDENTE.");
+        }
+        status = StatusPedido.AGUARDANDO_PREPARO;
+    }
+
     public void avancarStatus() {
         if (StatusPedido.STATUS_FINAIS.contains(status)) {
-            throw new IllegalStateException("pedido com status final não pode ter status alterado.");
+            throw new ValidacaoException("pedido já finalizado.");
+        }
+
+        if (StatusPedido.PAGAMENTO_PENDENTE.equals(status)) {
+            throw new ValidacaoException("não é possível avançar status de pagamento pendente.");
         }
 
         status = switch (status) {
-            case PAGAMENTO_PENDENTE -> StatusPedido.AGUARDANDO_PREPARO;
             case AGUARDANDO_PREPARO -> StatusPedido.EM_PREPARO;
             case EM_PREPARO -> StatusPedido.PRONTO;
-            case PRONTO, CONCLUIDO -> StatusPedido.CONCLUIDO;
-            case CANCELADO -> StatusPedido.CANCELADO;
+            case PRONTO -> StatusPedido.CONCLUIDO;
+            default -> throw new ValidacaoException("transição de status inválida a partir de %s.".formatted(status));
         };
     }
 }

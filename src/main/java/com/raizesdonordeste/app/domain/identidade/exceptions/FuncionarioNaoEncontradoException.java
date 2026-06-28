@@ -8,4 +8,8 @@ public class FuncionarioNaoEncontradoException extends ValidacaoException {
     public FuncionarioNaoEncontradoException(Id funcionarioId) {
         super("funcionário de id '%s' não encontrado.".formatted(funcionarioId));
     }
+
+    public FuncionarioNaoEncontradoException(String message) {
+        super(message);
+    }
 }

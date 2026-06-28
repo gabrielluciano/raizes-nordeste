@@ -62,7 +62,7 @@ public class ProcessarPagamentoUseCase extends AbstractPagamentoUseCase<Resultad
             pagamento.recusar(resposta.id(), resposta.motivoRecusa());
             pagamentoRepository.inserir(pagamento);
         } else {
-            pedido.avancarStatus();
+            pedido.confirmarPagamento();
             pagamento.aprovar(resposta.id(), resposta.pagoEm());
             pedidoRepository.atualizar(pedido);
             pagamentoRepository.inserir(pagamento);

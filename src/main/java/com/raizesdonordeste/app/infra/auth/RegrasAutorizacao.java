@@ -26,6 +26,10 @@ public class RegrasAutorizacao {
         return temRole(authentication, Role.CLIENTE);
     }
 
+    public boolean podeAvancarStatusPedido(Authentication authentication) {
+        return temQualquerRole(authentication, Role.ADMINISTRADOR, Role.GERENTE, Role.OPERADOR, Role.COZINHA);
+    }
+
     private boolean temRole(Authentication authentication, Role role) {
         return authentication.getAuthorities().stream()
                 .anyMatch(authority -> Objects.equals(authority.getAuthority(), "ROLE_" + role.name()));

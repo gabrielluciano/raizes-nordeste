@@ -1,14 +1,18 @@
 package com.raizesdonordeste.app.api.resources;
 
+import com.raizesdonordeste.app.api.dto.AvancarStatusPedidoResponse;
 import com.raizesdonordeste.app.api.dto.CriarPedidoRequest;
 import com.raizesdonordeste.app.api.dto.CriarPedidoResponse;
 import com.raizesdonordeste.app.api.dto.PedidoResponse;
+import com.raizesdonordeste.app.application.usecases.AvancarStatusPedidoUseCase;
 import com.raizesdonordeste.app.application.usecases.CriarPedidoUseCase;
 import com.raizesdonordeste.app.application.usecases.ObterPedidoUseCase;
 import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.identidade.model.Role;
+import com.raizesdonordeste.app.domain.pedido.model.AvancarStatusPedidoComando;
 import com.raizesdonordeste.app.domain.pedido.model.CriarPedidoComando;
 import com.raizesdonordeste.app.domain.pedido.model.ObterPedidoComando;
+import com.raizesdonordeste.app.domain.pedido.model.StatusPedido;
 import com.raizesdonordeste.app.infra.mapper.CriarPedidoComandoMapper;
 import com.raizesdonordeste.app.infra.mapper.PedidoResponseMapper;
 import jakarta.validation.Valid;
@@ -31,6 +35,7 @@ public class PedidoResource {
     private final CriarPedidoUseCase criarPedidoUseCase;
     private final ObterPedidoUseCase obterPedidoUseCase;
     private final PedidoResponseMapper pedidoResponseMapper;
+    private final AvancarStatusPedidoUseCase avancarStatusPedidoUseCase;
 
     @PostMapping
     @PreAuthorize("@regrasAutorizacao.podeCriarPedido(authentication)")
@@ -61,5 +66,18 @@ public class PedidoResource {
                 .map(pedidoResponseMapper::toResponse)
                 .map(response -> ResponseEntity.ok().body(response))
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}/avancar")
+    @PreAuthorize("@regrasAutorizacao.podeAvancarStatusPedido(authentication)")
+    public ResponseEntity<AvancarStatusPedidoResponse> avancarStatusPedido(@PathVariable String id,
+                                                                           JwtAuthenticationToken authentication) {
+        Jwt jwt = authentication.getToken();
+        Id contaId = Id.fromString(jwt.getSubject());
+
+        AvancarStatusPedidoComando comando = new AvancarStatusPedidoComando(contaId, Id.fromString(id));
+        StatusPedido novoStatus = avancarStatusPedidoUseCase.executar(comando);
+
+        return ResponseEntity.ok(new AvancarStatusPedidoResponse(novoStatus.name()));
     }
 }

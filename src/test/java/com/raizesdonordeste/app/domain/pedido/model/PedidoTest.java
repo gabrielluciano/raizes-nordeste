@@ -486,14 +486,34 @@ class PedidoTest {
     }
 
     @Test
-    void deveAvancarParaAguardandoPreparo_QuandoStatusPagamentoPendente() {
+    void deveAvancarParaAguardandoPreparo_QuandoConfirmarPagamento() {
         Pedido pedido = criarPedido()
                 .status(StatusPedido.PAGAMENTO_PENDENTE)
                 .build();
 
-        pedido.avancarStatus();
+        pedido.confirmarPagamento();
 
         assertThat(pedido.getStatus()).isEqualTo(StatusPedido.AGUARDANDO_PREPARO);
+    }
+
+    @Test
+    void deveLancarExcecao_QuandoConfirmarPagamentoEStatusNaoPendente() {
+        Pedido pedido = criarPedido()
+                .status(StatusPedido.AGUARDANDO_PREPARO)
+                .build();
+
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(pedido::confirmarPagamento)
+                .withMessage("pagamento só pode ser confirmado enquanto o pedido está em PAGAMENTO_PENDENTE.");
+    }
+
+    @Test
+    void deveLancarExcecao_QuandoAvancarStatusPagamentoPendente() {
+        Pedido pedido = criarPedido()
+                .status(StatusPedido.PAGAMENTO_PENDENTE)
+                .build();
+
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(pedido::avancarStatus)
+                .withMessage("não é possível avançar status de pagamento pendente.");
     }
 
     @Test
@@ -535,8 +555,8 @@ class PedidoTest {
                 .status(StatusPedido.CONCLUIDO)
                 .build();
 
-        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(pedido::avancarStatus)
-                .withMessage("pedido com status final não pode ter status alterado.");
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(pedido::avancarStatus)
+                .withMessage("pedido já finalizado.");
     }
 
     @Test
@@ -545,8 +565,8 @@ class PedidoTest {
                 .status(StatusPedido.CANCELADO)
                 .build();
 
-        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(pedido::avancarStatus)
-                .withMessage("pedido com status final não pode ter status alterado.");
+        assertThatExceptionOfType(ValidacaoException.class).isThrownBy(pedido::avancarStatus)
+                .withMessage("pedido já finalizado.");
     }
 
     private Pedido.PedidoBuilder criarPedido() {
