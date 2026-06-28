@@ -50,6 +50,7 @@ public class SecurityConfig {
                                 .decoder(jwtDecoder)
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter)))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/signup", "/webhooks/pagamentos/pix").permitAll()
                         .requestMatchers(HttpMethod.GET, "/unidades/{unidadeId}/cardapio").permitAll()
                         .anyRequest().authenticated())

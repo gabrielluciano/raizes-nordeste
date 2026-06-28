@@ -3,12 +3,19 @@ package com.raizesdonordeste.app.api.resources;
 import com.raizesdonordeste.app.api.dto.PagamentoAssincronoResponse;
 import com.raizesdonordeste.app.api.dto.PagamentoRequest;
 import com.raizesdonordeste.app.api.dto.PagamentoSincronoResponse;
+import com.raizesdonordeste.app.api.error.ErrorResponse;
 import com.raizesdonordeste.app.application.usecases.IniciarPagamentoPixUseCase;
 import com.raizesdonordeste.app.application.usecases.ProcessarPagamentoUseCase;
 import com.raizesdonordeste.app.domain.pagamento.model.PagamentoComando;
 import com.raizesdonordeste.app.domain.pagamento.model.ResultadoProcessamentoPagamento;
 import com.raizesdonordeste.app.domain.pagamento.model.ResultadoSolicitacaoPix;
 import com.raizesdonordeste.app.infra.mapper.PagamentoComandoMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +30,49 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 @RequestMapping("pagamentos")
 @RequiredArgsConstructor
+@Tag(name = "Pagamentos", description = "Processamento de pagamentos de pedidos")
 public class PagamentoResource {
 
     private final PagamentoComandoMapper pagamentoComandoMapper;
     private final ProcessarPagamentoUseCase processarPagamentoUseCase;
     private final IniciarPagamentoPixUseCase iniciarPagamentoPixUseCase;
 
+    @Operation(
+            summary = "Processar pagamento",
+            description = "Processa um pagamento via cartão ou PIX. Exige o header Idempotency-Key."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Pagamento com cartão processado.",
+                    content = @Content(schema = @Schema(implementation = PagamentoSincronoResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "202",
+                    description = "Pagamento PIX iniciado.",
+                    content = @Content(schema = @Schema(implementation = PagamentoAssincronoResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Dados de pagamento inválidos ou header Idempotency-Key ausente.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Token ausente ou inválido.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Sem permissão para pagar.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Erro inesperado.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
     @PostMapping
     @PreAuthorize("@regrasAutorizacao.podePagar(authentication)")
     public ResponseEntity<?> processarPagamento(@Valid @RequestBody PagamentoRequest request,

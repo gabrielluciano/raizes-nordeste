@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -50,6 +51,13 @@ public class RestExceptionHandler {
                 .toList();
 
         return ErrorResponse.of(ERRO_VALIDACAO_CODIGO, ERRO_VALIDACAO_MENSAGEM, detalhes, request.getRequestURI());
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMissingRequestHeader(MissingRequestHeaderException ex, HttpServletRequest request) {
+        ErrorResponse.FieldError detalhe = new ErrorResponse.FieldError(ex.getHeaderName(), "Header obrigatório ausente.");
+        return ErrorResponse.of(ERRO_VALIDACAO_CODIGO, ERRO_VALIDACAO_MENSAGEM, List.of(detalhe), request.getRequestURI());
     }
 
     @ExceptionHandler(AuthorizationDeniedException.class)

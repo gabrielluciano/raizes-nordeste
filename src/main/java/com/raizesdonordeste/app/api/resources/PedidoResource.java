@@ -4,6 +4,7 @@ import com.raizesdonordeste.app.api.dto.AvancarStatusPedidoResponse;
 import com.raizesdonordeste.app.api.dto.CriarPedidoRequest;
 import com.raizesdonordeste.app.api.dto.CriarPedidoResponse;
 import com.raizesdonordeste.app.api.dto.PedidoResponse;
+import com.raizesdonordeste.app.api.error.ErrorResponse;
 import com.raizesdonordeste.app.application.usecases.AvancarStatusPedidoUseCase;
 import com.raizesdonordeste.app.application.usecases.CriarPedidoUseCase;
 import com.raizesdonordeste.app.application.usecases.ObterPedidoUseCase;
@@ -15,6 +16,12 @@ import com.raizesdonordeste.app.domain.pedido.model.ObterPedidoComando;
 import com.raizesdonordeste.app.domain.pedido.model.StatusPedido;
 import com.raizesdonordeste.app.infra.mapper.CriarPedidoComandoMapper;
 import com.raizesdonordeste.app.infra.mapper.PedidoResponseMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("pedidos")
 @RequiredArgsConstructor
+@Tag(name = "Pedidos", description = "Endpoints para criação, consulta e atualização de pedidos.")
 public class PedidoResource {
 
     private static final String ROLE_CLAIM = "role";
@@ -37,6 +45,37 @@ public class PedidoResource {
     private final PedidoResponseMapper pedidoResponseMapper;
     private final AvancarStatusPedidoUseCase avancarStatusPedidoUseCase;
 
+    @Operation(
+            summary = "Criar um novo pedido",
+            description = "Cria um novo pedido para a conta autenticada."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Pedido criado com sucesso.",
+                    content = @Content(schema = @Schema(implementation = CriarPedidoResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Dados do pedido inválidos, prato inativo ou inexistente.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Token ausente ou inválido.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Sem permissão para criar pedidos.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Erro inesperado.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
     @PostMapping
     @PreAuthorize("@regrasAutorizacao.podeCriarPedido(authentication)")
     public ResponseEntity<CriarPedidoResponse> criar(@Valid @RequestBody CriarPedidoRequest request,
@@ -53,6 +92,37 @@ public class PedidoResource {
                 .body(new CriarPedidoResponse(id.toString()));
     }
 
+    @Operation(
+            summary = "Obter pedido",
+            description = "Retorna os detalhes de um pedido visível para a conta autenticada."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Pedido retornado com sucesso.",
+                    content = @Content(schema = @Schema(implementation = PedidoResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Id de pedido inválido.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Token ausente ou inválido.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Pedido não encontrado.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Erro inesperado.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
     @GetMapping("{id}")
     public ResponseEntity<PedidoResponse> obterPedido(@PathVariable String id,
                                                       JwtAuthenticationToken authentication) {
@@ -68,6 +138,37 @@ public class PedidoResource {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @Operation(
+            summary = "Avançar status do pedido",
+            description = "Avança o pedido para o próximo status."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Status do pedido avançado com sucesso.",
+                    content = @Content(schema = @Schema(implementation = AvancarStatusPedidoResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Id inválido, pedido não encontrado ou status não pode ser avançado.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Token ausente ou inválido.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Sem permissão para avançar o status do pedido.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Erro inesperado.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
     @PatchMapping("{id}/avancar")
     @PreAuthorize("@regrasAutorizacao.podeAvancarStatusPedido(authentication)")
     public ResponseEntity<AvancarStatusPedidoResponse> avancarStatusPedido(@PathVariable String id,

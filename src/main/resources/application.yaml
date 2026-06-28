@@ -18,6 +18,15 @@ app:
   gateway:
     webhook-secret: ${WEBHOOK_SECRET:segredo-forte-para-autenticacao-no-webhook}
 
+springdoc:
+  override-with-generic-response: false
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: method
+
 logging:
   level:
     org.springframework.security: debug

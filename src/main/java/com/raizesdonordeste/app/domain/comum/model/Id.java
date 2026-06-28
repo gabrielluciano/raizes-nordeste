@@ -1,5 +1,7 @@
 package com.raizesdonordeste.app.domain.comum.model;
 
+import com.raizesdonordeste.app.domain.comum.exception.ValidacaoException;
+
 import java.util.UUID;
 
 public record Id(UUID id) {
@@ -20,7 +22,14 @@ public record Id(UUID id) {
     }
 
     public static Id fromString(String id) {
-        return new Id(id == null ? null : UUID.fromString(id));
+        if (id == null) {
+            return new Id(null);
+        }
+        try {
+            return new Id(UUID.fromString(id));
+        } catch (IllegalArgumentException e) {
+            throw new ValidacaoException("Formato de id inválido: " + id);
+        }
     }
 
     public static UUID toUUID(Id id) {
