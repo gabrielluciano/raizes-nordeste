@@ -2,6 +2,7 @@ package com.raizesdonordeste.app.domain.pedido.services;
 
 import com.raizesdonordeste.app.domain.cardapio.model.Promocao;
 import com.raizesdonordeste.app.domain.comum.exception.ValidacaoException;
+import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.comum.util.Guarda;
 import com.raizesdonordeste.app.domain.fidelidade.model.MovimentacaoPontos;
 import com.raizesdonordeste.app.domain.fidelidade.model.RegrasFidelidade;
@@ -69,9 +70,9 @@ public class PedidoService {
         return pedido.calcularTotais(promocoes, regras, pontos, saldoPontos);
     }
 
-    public Optional<MovimentacaoPontos> calcularResgate(long pontosConsumidos, Cliente cliente) {
+    public Optional<MovimentacaoPontos> calcularResgate(long pontosConsumidos, Cliente cliente, Id pedidoId) {
         if (pontosConsumidos > 0) {
-            return Optional.of(MovimentacaoPontos.resgate(pontosConsumidos, cliente.getId(), now()));
+            return Optional.of(MovimentacaoPontos.resgate(pontosConsumidos, cliente.getId(), pedidoId, now()));
         }
         return Optional.empty();
     }
@@ -90,6 +91,6 @@ public class PedidoService {
             return Optional.empty();
         }
 
-        return Optional.of(MovimentacaoPontos.acumulo(acumulo, cliente.getId(), now(), now().plusMonths(regras.validadePontosMeses())));
+        return Optional.of(MovimentacaoPontos.acumulo(acumulo, cliente.getId(), pedido.getId(), now(), now().plusMonths(regras.validadePontosMeses())));
     }
 }

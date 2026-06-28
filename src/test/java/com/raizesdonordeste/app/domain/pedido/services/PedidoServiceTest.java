@@ -122,7 +122,7 @@ class PedidoServiceTest {
         ResultadoCalculo resultado = pedidoService.calcularTotais(pedido, regras, Collections.emptySet(), cliente, 10);
         pedido.consolidarTotais(resultado);
 
-        Optional<MovimentacaoPontos> movimentacao = pedidoService.calcularResgate(resultado.pontosConsumidos(), cliente);
+        Optional<MovimentacaoPontos> movimentacao = pedidoService.calcularResgate(resultado.pontosConsumidos(), cliente, pedido.getId());
 
         assertThat(movimentacao).isPresent();
         assertThat(movimentacao.get().tipo()).isEqualTo(TipoMovPontos.RESGATE);
@@ -137,7 +137,7 @@ class PedidoServiceTest {
         pedido.consolidarTotais(resultado);
 
         assertThat(pedidoService.calcularAcumulo(cliente, pedido, regras)).isEmpty();
-        assertThat(pedidoService.calcularResgate(resultado.pontosConsumidos(), cliente)).isEmpty();
+        assertThat(pedidoService.calcularResgate(resultado.pontosConsumidos(), cliente, pedido.getId())).isEmpty();
     }
 
     @Test

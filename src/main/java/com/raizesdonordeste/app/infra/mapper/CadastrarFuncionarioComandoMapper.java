@@ -3,19 +3,22 @@ package com.raizesdonordeste.app.infra.mapper;
 import com.raizesdonordeste.app.api.dto.CadastroFuncionarioRequest;
 import com.raizesdonordeste.app.domain.comum.model.Id;
 import com.raizesdonordeste.app.domain.identidade.model.CadastrarFuncionarioComando;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Component;
 
-import java.util.UUID;
+@Component
+public class CadastrarFuncionarioComandoMapper {
 
-@Mapper(componentModel = "spring")
-public interface CadastrarFuncionarioComandoMapper {
-
-    CadastrarFuncionarioComandoMapper INSTANCE = Mappers.getMapper(CadastrarFuncionarioComandoMapper.class);
-
-    CadastrarFuncionarioComando toComando(CadastroFuncionarioRequest cadastro);
-
-    default Id uuidParaId(UUID uuid) {
-        return uuid == null ? null : new Id(uuid);
+    public CadastrarFuncionarioComando toComando(CadastroFuncionarioRequest request, Id contaSolicitante) {
+        return new CadastrarFuncionarioComando(
+                contaSolicitante,
+                request.getNome(),
+                new Id(request.getUnidadeId()),
+                request.getTelefone(),
+                request.getEndereco(),
+                request.getEmail(),
+                request.getSenha(),
+                request.getDataNascimento(),
+                request.getRole()
+        );
     }
 }

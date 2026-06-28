@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,8 +72,12 @@ public class AdminFuncionarioResource {
     })
     @PostMapping("funcionarios")
     @PreAuthorize("@regrasAutorizacao.podeCriarFuncionario(authentication)")
-    public ResponseEntity<CadastroResponse> cadastrar(@Valid @RequestBody CadastroFuncionarioRequest request) {
-        CadastrarFuncionarioComando comando = cadastrarFuncionarioComandoMapper.toComando(request);
+    public ResponseEntity<CadastroResponse> cadastrar(@Valid @RequestBody CadastroFuncionarioRequest request,
+                                                      JwtAuthenticationToken authentication) {
+        Jwt jwt = authentication.getToken();
+        Id contaSolicitante = Id.fromString(jwt.getSubject());
+
+        CadastrarFuncionarioComando comando = cadastrarFuncionarioComandoMapper.toComando(request, contaSolicitante);
         Id id = cadastroFuncionarioUseCase.executar(comando);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

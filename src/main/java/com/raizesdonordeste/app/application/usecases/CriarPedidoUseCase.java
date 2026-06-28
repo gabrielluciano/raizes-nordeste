@@ -88,7 +88,7 @@ public class CriarPedidoUseCase implements CasoDeUso<CriarPedidoComando, Id> {
 
         pedidoRepository.inserir(pedido);
 
-        pedidoService.calcularResgate(resultado.pontosConsumidos(), clienteFidelidade)
+        pedidoService.calcularResgate(resultado.pontosConsumidos(), clienteFidelidade, pedido.getId())
                 .ifPresent(movimentacao -> {
                     clienteFidelidade.debitar(movimentacao.pontos());
                     movimentacaoPontosRepository.inserir(movimentacao);

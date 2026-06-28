@@ -12,6 +12,7 @@ public record ExtratoFidelidadeResponse(
 
     public record MovimentacaoResponse(
             String id,
+            String pedidoId,
             TipoMovPontos tipo,
             long pontos,
             LocalDateTime dataContabilizacao,

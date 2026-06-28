@@ -67,7 +67,7 @@ public class CadastroFuncionarioUseCase implements CasoDeUso<CadastrarFuncionari
 
         auditoriaService.registrar(RegistroAuditoria.criar(
                 AtorTipo.FUNCIONARIO,
-                null,
+                comando.contaSolicitante().toString(),
                 EventoAuditoria.FUNCIONARIO_CADASTRADO,
                 "Funcionario",
                 funcionario.id().toString(),

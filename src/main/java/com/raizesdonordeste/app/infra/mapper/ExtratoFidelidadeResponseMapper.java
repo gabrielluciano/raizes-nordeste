@@ -21,6 +21,7 @@ public class ExtratoFidelidadeResponseMapper {
     private ExtratoFidelidadeResponse.MovimentacaoResponse toMovimentacaoResponse(MovimentacaoPontos movimentacao) {
         return new ExtratoFidelidadeResponse.MovimentacaoResponse(
                 movimentacao.id().toString(),
+                movimentacao.pedidoId() == null ? null : movimentacao.pedidoId().toString(),
                 movimentacao.tipo(),
                 movimentacao.pontos(),
                 movimentacao.dataContabilizacao(),

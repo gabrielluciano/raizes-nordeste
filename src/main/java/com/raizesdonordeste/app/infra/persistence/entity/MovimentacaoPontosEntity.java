@@ -25,6 +25,7 @@ public class MovimentacaoPontosEntity {
     @Id
     private UUID id;
     private UUID clienteId;
+    private UUID pedidoId;
     private String tipo;
     private long pontos;
     private LocalDateTime dataContabilizacao;

@@ -76,35 +76,6 @@ CREATE TABLE raizesnordeste.promocoes
 
 CREATE INDEX idx_promocoes_prato_id ON raizesnordeste.promocoes (prato_id);
 
-CREATE TABLE raizesnordeste.regras_fidelidade
-(
-    id                      UUID PRIMARY KEY,
-    valor_por_ponto         NUMERIC(10, 6) NOT NULL,
-    acumulo_por_centavo     NUMERIC(10, 6) NOT NULL,
-    validade_pontos_meses   INT            NOT NULL,
-    teto_resgate_percentual INT            NOT NULL,
-    ativa                   BOOLEAN        NOT NULL DEFAULT FALSE,
-    ativada_em              TIMESTAMP      NOT NULL,
-    inativada_em            TIMESTAMP
-);
-
-CREATE UNIQUE INDEX idx_regras_fidelidade_ativa ON raizesnordeste.regras_fidelidade (ativa) WHERE ativa = TRUE;
-
-CREATE TABLE raizesnordeste.movimentacoes_pontos
-(
-    id                  UUID PRIMARY KEY,
-    cliente_id          UUID        NOT NULL REFERENCES raizesnordeste.clientes (id),
-    tipo                VARCHAR(20) NOT NULL,
-    pontos              BIGINT      NOT NULL,
-    data_contabilizacao TIMESTAMP   NOT NULL,
-    data_expiracao      TIMESTAMP,
-
-    CONSTRAINT chk_movimentacoes_pontos_tipo
-        CHECK (tipo IN ('ACUMULO', 'RESGATE', 'EXPIRACAO'))
-);
-
-CREATE INDEX idx_movimentacoes_pontos_cliente_id ON raizesnordeste.movimentacoes_pontos (cliente_id);
-
 CREATE TABLE raizesnordeste.pedidos
 (
     id                               UUID PRIMARY KEY,
@@ -141,6 +112,36 @@ CREATE TABLE raizesnordeste.itens_pedido
 );
 
 CREATE INDEX idx_itens_pedido_pedido_id ON raizesnordeste.itens_pedido (pedido_id);
+
+CREATE TABLE raizesnordeste.regras_fidelidade
+(
+    id                      UUID PRIMARY KEY,
+    valor_por_ponto         NUMERIC(10, 6) NOT NULL,
+    acumulo_por_centavo     NUMERIC(10, 6) NOT NULL,
+    validade_pontos_meses   INT            NOT NULL,
+    teto_resgate_percentual INT            NOT NULL,
+    ativa                   BOOLEAN        NOT NULL DEFAULT FALSE,
+    ativada_em              TIMESTAMP      NOT NULL,
+    inativada_em            TIMESTAMP
+);
+
+CREATE UNIQUE INDEX idx_regras_fidelidade_ativa ON raizesnordeste.regras_fidelidade (ativa) WHERE ativa = TRUE;
+
+CREATE TABLE raizesnordeste.movimentacoes_pontos
+(
+    id                  UUID PRIMARY KEY,
+    cliente_id          UUID        NOT NULL REFERENCES raizesnordeste.clientes (id),
+    pedido_id           UUID REFERENCES raizesnordeste.pedidos (id),
+    tipo                VARCHAR(20) NOT NULL,
+    pontos              BIGINT      NOT NULL,
+    data_contabilizacao TIMESTAMP   NOT NULL,
+    data_expiracao      TIMESTAMP,
+
+    CONSTRAINT chk_movimentacoes_pontos_tipo
+        CHECK (tipo IN ('ACUMULO', 'RESGATE', 'EXPIRACAO'))
+);
+
+CREATE INDEX idx_movimentacoes_pontos_cliente_id ON raizesnordeste.movimentacoes_pontos (cliente_id);
 
 CREATE TABLE raizesnordeste.pagamentos
 (

@@ -13,6 +13,7 @@ public class MovimentacaoPontosPersistenceMapper {
         return new MovimentacaoPontosEntity(
                 domain.id().id(),
                 domain.clienteId().id(),
+                domain.pedidoId().id(),
                 domain.tipo().name(),
                 domain.pontos(),
                 domain.dataContabilizacao(),
@@ -24,6 +25,7 @@ public class MovimentacaoPontosPersistenceMapper {
         return new MovimentacaoPontos(
                 Id.fromUUID(entity.getId()),
                 Id.fromUUID(entity.getClienteId()),
+                Id.fromUUID(entity.getPedidoId()),
                 TipoMovPontos.valueOf(entity.getTipo()),
                 entity.getPontos(),
                 entity.getDataContabilizacao(),
