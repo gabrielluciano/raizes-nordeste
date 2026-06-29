@@ -1,0 +1,4508 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: RaizesNordesteBackend
+meta:
+  id: wrk_aa53893da5064fb88c1a9cb3a26de453
+  created: 1782771590140
+  modified: 1782771590140
+  description: ""
+collection:
+  - name: Auth
+    meta:
+      id: fld_577d9ccf97244dbe9014f14b478e337a
+      created: 1782425030479
+      modified: 1782771666515
+      sortKey: -1782647185551
+      description: ""
+    children:
+      - name: Cliente
+        meta:
+          id: fld_a74c396533ff4c8cacc25438c39ed3b4
+          created: 1782427726323
+          modified: 1782771664394
+          sortKey: -1782585074943.5
+          description: ""
+        children:
+          - url: http://localhost:8080/auth/signup
+            name: Cadastro Cliente
+            meta:
+              id: req_d0be54d3797d4beda52ad8c28ec96314
+              created: 1781995855484
+              modified: 1782602614831
+              isPrivate: false
+              description: ""
+              sortKey: -1782427741083
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome": "Marcos Marques",
+                	"cpf": "52998224725",
+                	"telefone": "11987654321",
+                	"endereco": "Rua Sete, 230, Barra Mansa - RJ",
+                	"email": "marcos@email.com",
+                	"senha": "Senha@123",
+                	"dataNascimento": "1990-05-15",
+                	"versaoAceiteTermos": "v1.0"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: |
+                // Tests
+
+                insomnia.test('Status deve ser 201', () => {
+                    insomnia.expect(insomnia.response.code).to.eql(201);
+                });
+
+                insomnia.test('Body deve conter id', () => {
+                    const jsonBody = insomnia.response.json();
+                    insomnia.expect(jsonBody).to.have.property('id');
+                });
+
+                // Environment updates
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/auth/login
+            name: Login Cliente
+            meta:
+              id: req_4339e36bb7da43a99e585ede79aa8106
+              created: 1782052987126
+              modified: 1782602625588
+              isPrivate: false
+              description: ""
+              sortKey: -1782427740683
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"email": "marcos@email.com",
+                	"senha": "Senha@123"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >
+                // Tests
+
+
+                insomnia.test('Status deve ser 200', () => {
+                    insomnia.expect(insomnia.response.code).to.eql(200);
+                });
+
+
+                insomnia.test('Body deve conter accessToken', () => {
+                    const jsonBody = insomnia.response.json();
+                    insomnia.expect(jsonBody).to.have.property('accessToken');
+                });
+
+
+                // Environment updates
+
+                insomnia.environment.set("clienteAccessToken",
+                insomnia.response.json().accessToken);
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/auth/signup
+            name: Cadastro com CPF inválido
+            meta:
+              id: req_4db231c923fe440ca30d7f0c6b9eb0f7
+              created: 1782425107332
+              modified: 1782602617245
+              isPrivate: false
+              description: ""
+              sortKey: -1782427740983
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome": "Marcos Marques",
+                	"cpf": "11111111111",
+                	"telefone": "11987654321",
+                	"endereco": "Rua Sete, 230, Barra Mansa - RJ",
+                	"email": "marcos@email.com",
+                	"senha": "Senha@123",
+                	"dataNascimento": "1990-05-15",
+                	"versaoAceiteTermos": "v1.0"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >
+                // Tests
+
+
+                insomnia.test('Status deve ser 400', () => {
+                    insomnia.expect(insomnia.response.code).to.eql(400);
+                });
+
+
+                insomnia.test('Body deve conter error = ERRO_VALIDACAO', () => {
+                    const jsonBody = insomnia.response.json();
+                    insomnia.expect(jsonBody).to.have.property('error', 'ERRO_VALIDACAO');
+                });
+
+
+                // Environment updates
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/auth/signup
+            name: Cadastro com Senha Fraca
+            meta:
+              id: req_2ec8c1ecb0344b19ac6bfd37fa41ae6c
+              created: 1782426344532
+              modified: 1782602619319
+              isPrivate: false
+              description: ""
+              sortKey: -1782427740883
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome": "Marcos Marques",
+                	"cpf": "52998224725",
+                	"telefone": "11987654321",
+                	"endereco": "Rua Sete, 230, Barra Mansa - RJ",
+                	"email": "marcos@email.com",
+                	"senha": "Sen@12",
+                	"dataNascimento": "1990-05-15",
+                	"versaoAceiteTermos": "v1.0"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >
+                // Tests
+
+
+                insomnia.test('Status deve ser 400', () => {
+                    insomnia.expect(insomnia.response.code).to.eql(400);
+                });
+
+
+                insomnia.test('Body deve conter error = ERRO_VALIDACAO', () => {
+                    const jsonBody = insomnia.response.json();
+                    insomnia.expect(jsonBody).to.have.property('error', 'ERRO_VALIDACAO');
+                });
+
+
+                // Environment updates
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/auth/signup
+            name: Cadastro com Email Duplicado
+            meta:
+              id: req_b282e99bfc734538b77a07481926a551
+              created: 1782426521791
+              modified: 1782602621023
+              isPrivate: false
+              description: ""
+              sortKey: -1782427740783
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome": "Outro Marcos",
+                	"cpf": "52998224725",
+                	"telefone": "11987654321",
+                	"endereco": "Rua Sete, 230, Barra Mansa - RJ",
+                	"email": "marcos@email.com",
+                	"senha": "Senha@1234",
+                	"dataNascimento": "1990-05-15",
+                	"versaoAceiteTermos": "v1.0"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >
+                // Tests
+
+
+                insomnia.test('Status deve ser 422', () => {
+                    insomnia.expect(insomnia.response.code).to.eql(422);
+                });
+
+
+                insomnia.test('Body deve conter error = CONTA_JA_CADASTRADA', ()
+                => {
+                    const jsonBody = insomnia.response.json();
+                    insomnia.expect(jsonBody).to.have.property('error', 'CONTA_JA_CADASTRADA');
+                });
+
+
+                // Environment updates
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/auth/login
+            name: Login com Senha inválida
+            meta:
+              id: req_fdebbbd731cf4ceab1c0086b85447ffc
+              created: 1782427164031
+              modified: 1782602623288
+              isPrivate: false
+              description: ""
+              sortKey: -1782427740733
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"email": "marcos@email.com",
+                	"senha": "Senha@1235"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >
+                // Tests
+
+
+                insomnia.test('Status deve ser 401', () => {
+                    insomnia.expect(insomnia.response.code).to.eql(401);
+                });
+
+
+                insomnia.test('Body deve conter error = CREDENCIAIS_INVALIDAS',
+                () => {
+                    const jsonBody = insomnia.response.json();
+                    insomnia.expect(jsonBody).to.have.property('error', 'CREDENCIAIS_INVALIDAS');
+                });
+
+
+                // Environment updates
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/auth/login
+            name: Login com Email inexistente
+            meta:
+              id: req_23058a87b7ab424ebf012d1b79989221
+              created: 1782427698186
+              modified: 1782602627522
+              isPrivate: false
+              description: ""
+              sortKey: -1782427740583
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"email": "marcos.1@email.com",
+                	"senha": "Senha@1235"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >
+                // Tests
+
+
+                insomnia.test('Status deve ser 401', () => {
+                    insomnia.expect(insomnia.response.code).to.eql(401);
+                });
+
+
+                insomnia.test('Body deve conter error = CREDENCIAIS_INVALIDAS',
+                () => {
+                    const jsonBody = insomnia.response.json();
+                    insomnia.expect(jsonBody).to.have.property('error', 'CREDENCIAIS_INVALIDAS');
+                });
+
+
+                // Environment updates
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/auth/login
+            name: Login Cliente Fidelidade
+            meta:
+              id: req_0bada79a93b34b8d8fd29e6c9bc6d484
+              created: 1782434806422
+              modified: 1782602676818
+              isPrivate: false
+              description: ""
+              sortKey: -1782428555009.8125
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"email": "fidelidade@email.com",
+                	"senha": "Senha@123"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >
+                // Tests
+
+
+                insomnia.test('Status deve ser 200', () => {
+                    insomnia.expect(insomnia.response.code).to.eql(200);
+                });
+
+
+                insomnia.test('Body deve conter accessToken', () => {
+                    const jsonBody = insomnia.response.json();
+                    insomnia.expect(jsonBody).to.have.property('accessToken');
+                });
+
+
+                // Environment updates
+
+                insomnia.environment.set("clienteFidelidadeAccessToken",
+                insomnia.response.json().accessToken);
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/auth/login
+            name: Login Cliente Baixo Saldo
+            meta:
+              id: req_78e8910ae6c5407d8c50b8c1785851df
+              created: 1782436140249
+              modified: 1782602683209
+              isPrivate: false
+              description: ""
+              sortKey: -1782428059125.9375
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"email": "saldobaixo@email.com",
+                	"senha": "Senha@123"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >
+                // Tests
+
+
+                insomnia.test('Status deve ser 200', () => {
+                    insomnia.expect(insomnia.response.code).to.eql(200);
+                });
+
+
+                insomnia.test('Body deve conter accessToken', () => {
+                    const jsonBody = insomnia.response.json();
+                    insomnia.expect(jsonBody).to.have.property('accessToken');
+                });
+
+
+                // Environment updates
+
+                insomnia.environment.set("clienteSaldoBaixoAccessToken",
+                insomnia.response.json().accessToken);
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: Funcionario
+        meta:
+          id: fld_0d6e4349a3064c189b1c286ebf7ea4ac
+          created: 1782427783824
+          modified: 1782771666515
+          sortKey: -1782585074843.5
+          description: ""
+        children:
+          - url: http://localhost:8080/admin/funcionarios
+            name: Cadastro Funcionário
+            meta:
+              id: req_fdc86d64434a411eaae4a74b630147ed
+              created: 1782083955579
+              modified: 1782602632457
+              isPrivate: false
+              description: ""
+              sortKey: -1782427811234
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome": "Gabriel Luciano",
+                	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+                	"telefone": "81999998888",
+                	"endereco": "Rua Test, 999, Volta Redonda - RJ",
+                	"email": "gabriel.luciano@raizesnordeste.com",
+                	"senha": "Senha@1234",
+                	"dataNascimento": "1998-06-15",
+                	"role": "OPERADOR"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ _.adminAccessToken }}"
+              prefix: ""
+            scripts:
+              afterResponse: |
+                // Tests
+
+                insomnia.test('Status deve ser 201', () => {
+                    insomnia.expect(insomnia.response.code).to.eql(201);
+                });
+
+                insomnia.test('Body deve conter id', () => {
+                    const jsonBody = insomnia.response.json();
+                    insomnia.expect(jsonBody).to.have.property('id');
+                });
+
+                // Environment updates
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/auth/login
+            name: Login Funcionário
+            meta:
+              id: req_498c5477ac234ceabb2880986d792b49
+              created: 1782084529563
+              modified: 1782602658288
+              isPrivate: false
+              description: ""
+              sortKey: -1782427775758.5
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"email": "gabriel.luciano@raizesnordeste.com",
+                	"senha": "Senha@1234"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >
+                // Tests
+
+
+                insomnia.test('Status deve ser 200', () => {
+                    insomnia.expect(insomnia.response.code).to.eql(200);
+                });
+
+
+                insomnia.test('Body deve conter accessToken', () => {
+                    const jsonBody = insomnia.response.json();
+                    insomnia.expect(jsonBody).to.have.property('accessToken');
+                });
+
+
+                // Environment updates
+
+                insomnia.environment.set("funcionarioAccessToken",
+                insomnia.response.json().accessToken);
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/auth/login
+            name: Login Admin
+            meta:
+              id: req_9a0f7e96371342d7a220a49ebea8b0a6
+              created: 1782086613834
+              modified: 1782602629581
+              isPrivate: false
+              description: ""
+              sortKey: -1782427811334
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"email": "admin@raizesnordeste.com",
+                	"senha": "Senha@123"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >
+                // Tests
+
+
+                insomnia.test('Status deve ser 200', () => {
+                    insomnia.expect(insomnia.response.code).to.eql(200);
+                });
+
+
+                insomnia.test('Body deve conter accessToken', () => {
+                    const jsonBody = insomnia.response.json();
+                    insomnia.expect(jsonBody).to.have.property('accessToken');
+                });
+
+
+                // Environment updates
+
+                insomnia.environment.set("adminAccessToken",
+                insomnia.response.json().accessToken);
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/admin/funcionarios
+            name: Cadastro Funcionário Sem Token
+            meta:
+              id: req_973bc0fd3c6647ec8d15f299e13bfc6d
+              created: 1782427943827
+              modified: 1782602637070
+              isPrivate: false
+              description: ""
+              sortKey: -1782427776158.5
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome": "Gabriel Luciano Sem Token",
+                	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+                	"telefone": "81999998888",
+                	"endereco": "Rua Test, 999, Volta Redonda - RJ",
+                	"email": "gabriel.luciano@raizesnordeste.com",
+                	"senha": "Senha@1234",
+                	"dataNascimento": "1998-06-15",
+                	"role": "OPERADOR"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              type: bearer
+              disabled: true
+              token: ""
+              prefix: ""
+            scripts:
+              afterResponse: |
+                // Tests
+
+                insomnia.test('Status deve ser 401', () => {
+                    insomnia.expect(insomnia.response.code).to.eql(401);
+                });
+
+                // Environment updates
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/admin/funcionarios
+            name: Cadastro Funcionário Token Cliente
+            meta:
+              id: req_a0b359b4a4ec428f8a1cf58f85306d80
+              created: 1782428010255
+              modified: 1782602639106
+              isPrivate: false
+              description: ""
+              sortKey: -1782427776058.5
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome": "Gabriel Luciano",
+                	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+                	"telefone": "81999998888",
+                	"endereco": "Rua Test, 999, Volta Redonda - RJ",
+                	"email": "gabriel.luciano@raizesnordeste.com",
+                	"senha": "Senha@1234",
+                	"dataNascimento": "1998-06-15",
+                	"role": "OPERADOR"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ _.clienteAccessToken }}"
+              prefix: ""
+            scripts:
+              afterResponse: >
+                // Tests
+
+
+                insomnia.test('Status deve ser 403', () => {
+                    insomnia.expect(insomnia.response.code).to.eql(403);
+                });
+
+
+                insomnia.test('Body deve conter error = ACESSO_NEGADO', () => {
+                    const jsonBody = insomnia.response.json();
+                    insomnia.expect(jsonBody).to.have.property('error', 'ACESSO_NEGADO');
+                });
+
+
+                // Environment updates
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/admin/funcionarios
+            name: Cadastro Funcionário com Role CLIENTE
+            meta:
+              id: req_c4735d77d55144b98e480380d1d593a7
+              created: 1782428521239
+              modified: 1782602654247
+              isPrivate: false
+              description: ""
+              sortKey: -1782427775958.5
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome": "Gabriel Luciano",
+                	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+                	"telefone": "81999998888",
+                	"endereco": "Rua Test, 999, Volta Redonda - RJ",
+                	"email": "gabriel.luciano@raizesnordeste.com",
+                	"senha": "Senha@1234",
+                	"dataNascimento": "1998-06-15",
+                	"role": "CLIENTE"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ _.adminAccessToken }}"
+              prefix: ""
+            scripts:
+              afterResponse: >
+                // Tests
+
+
+                insomnia.test('Status deve ser 400', () => {
+                    insomnia.expect(insomnia.response.code).to.eql(400);
+                });
+
+
+                insomnia.test('Body deve conter error = VALIDACAO', () => {
+                    const jsonBody = insomnia.response.json();
+                    insomnia.expect(jsonBody).to.have.property('error', 'VALIDACAO');
+                });
+
+
+                // Environment updates
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/admin/funcionarios
+            name: Cadastro Funcionário Com Unidade Inexistente
+            meta:
+              id: req_22a2bf0b5d5c49c2ba4e6783cde94cf4
+              created: 1782431608557
+              modified: 1782602656008
+              isPrivate: false
+              description: ""
+              sortKey: -1782427775858.5
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome": "Novo Funcionário",
+                	"unidadeId": "95086d8c-9a7b-42a7-bc66-70e1de016265",
+                	"telefone": "81999998888",
+                	"endereco": "Rua Test, 999, Volta Redonda - RJ",
+                	"email": "novo.funcionario@raizesnordeste.com",
+                	"senha": "Senha@1234",
+                	"dataNascimento": "1998-06-15",
+                	"role": "OPERADOR"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ _.adminAccessToken }}"
+              prefix: ""
+            scripts:
+              afterResponse: >
+                // Tests
+
+
+                insomnia.test('Status deve ser 400', () => {
+                    insomnia.expect(insomnia.response.code).to.eql(400);
+                });
+
+
+                insomnia.test('Body deve conter error = VALIDACAO', () => {
+                    const jsonBody = insomnia.response.json();
+                    insomnia.expect(jsonBody).to.have.property('error', 'VALIDACAO');
+                });
+
+
+                // Environment updates
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+  - name: Pedidos
+    meta:
+      id: fld_5831bd655c8b49a795986a1756fb6bc1
+      created: 1782431757140
+      modified: 1782771671216
+      sortKey: -1782647185501
+      description: ""
+    children:
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Cliente
+        meta:
+          id: req_2c6fdeee37a74889a668cdac2ba8ed3b
+          created: 1782255641272
+          modified: 1782602661106
+          isPrivate: false
+          description: ""
+          sortKey: -1782431779205
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+            	"canal": "APP",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-23T12:00:00",
+            	"consentimentoFidelizacao": true,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 2
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 201', () => {
+                insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            // Environment updates
+
+            insomnia.environment.set("idPedidoCliente",
+            insomnia.response.json().id);
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Sem Autenticação
+        meta:
+          id: req_ad59f8f4423c40b5a4fd059cbec2b19c
+          created: 1782431851634
+          modified: 1782602663093
+          isPrivate: false
+          description: ""
+          sortKey: -1782429795269.5
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+            	"canal": "APP",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-23T12:00:00",
+            	"consentimentoFidelizacao": true,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 2
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: true
+          token: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 401', () => {
+                insomnia.expect(insomnia.response.code).to.eql(401);
+            });
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Com Promoção
+        meta:
+          id: req_ca2f9c2852b3474dbd2e15b147569004
+          created: 1782431981471
+          modified: 1782602665361
+          isPrivate: false
+          description: ""
+          sortKey: -1782429795169.5
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+            	"canal": "APP",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-23T12:00:00",
+            	"consentimentoFidelizacao": true,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "a737a7e6-c0fe-4e19-9f56-8d02edf6b99d",
+            			"quantidade": 1
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 201', () => {
+                insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            // Environment updates
+
+            insomnia.environment.set("idPedidoPromocao",
+            insomnia.response.json().id);
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Via Balcao Com Token Funcionario
+        meta:
+          id: req_811a90b2201142b3be6f174bc4acdbba
+          created: 1782432066575
+          modified: 1782602667276
+          isPrivate: false
+          description: ""
+          sortKey: -1782429795069.5
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"canal": "BALCAO",
+            	"nomeCliente": "José da Silva",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-25T12:00:00",
+            	"consentimentoFidelizacao": false,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 1
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.funcionarioAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 201', () => {
+                insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            // Environment updates
+
+            insomnia.environment.set("idPedidoBalcao",
+            insomnia.response.json().id);
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Via Balcao Com CPF de Cliente Cadastrado
+        meta:
+          id: req_9b70386599e94043ab004298a6c44b9e
+          created: 1782432198982
+          modified: 1782602669420
+          isPrivate: false
+          description: ""
+          sortKey: -1782428803201.75
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"canal": "BALCAO",
+            	"cpfCliente": "52998224725",
+            	"nomeCliente": "Marcos Marques",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-25T12:00:00",
+            	"consentimentoFidelizacao": true,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "a737a7e6-c0fe-4e19-9f56-8d02edf6b99d",
+            			"quantidade": 1
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.funcionarioAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 201', () => {
+                insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            // Environment updates
+
+            insomnia.environment.set("idPedidoBalcaoCpf",
+            insomnia.response.json().id);
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Sem Itens
+        meta:
+          id: req_628471ba81fd4fd8b2b3cc145d055585
+          created: 1782433188296
+          modified: 1782602671264
+          isPrivate: false
+          description: ""
+          sortKey: -1782428803101.75
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+            	"canal": "APP",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-23T12:00:00",
+            	"consentimentoFidelizacao": true,
+            	"pontosDesejados": 0,
+            	"itens": []
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 400', () => {
+                insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+
+
+            insomnia.test('Body deve conter error = ERRO_VALIDACAO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'ERRO_VALIDACAO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Com Prato Inexistente
+        meta:
+          id: req_97de698fae3d4146b74ff406d115804b
+          created: 1782433229984
+          modified: 1782602673021
+          isPrivate: false
+          description: ""
+          sortKey: -1782428803001.75
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+            	"canal": "APP",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-23T12:00:00",
+            	"consentimentoFidelizacao": true,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "582fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 2
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 400', () => {
+                insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+
+
+            insomnia.test('Body deve conter error = VALIDACAO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'VALIDACAO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Via App Sem Unidade
+        meta:
+          id: req_2df42f7d665540e58dfaf05fcccd4a3a
+          created: 1782433459124
+          modified: 1782602674944
+          isPrivate: false
+          description: ""
+          sortKey: -1782428802901.75
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"canal": "APP",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-23T12:00:00",
+            	"consentimentoFidelizacao": true,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 2
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 400', () => {
+                insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+
+
+            insomnia.test('Body deve conter error = VALIDACAO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'VALIDACAO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Com Resgate Pontos
+        meta:
+          id: req_df02eb60f2134e4ab0be9a681a784f85
+          created: 1782434758769
+          modified: 1782602678964
+          isPrivate: false
+          description: ""
+          sortKey: -1782428307117.875
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+            	"canal": "APP",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-25T12:00:00",
+            	"consentimentoFidelizacao": false,
+            	"pontosDesejados": 100,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 2
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteFidelidadeAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 201', () => {
+                insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            // Environment updates
+
+            insomnia.environment.set("idPedidoResgate",
+            insomnia.response.json().id);
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Com Resgate Acima do Teto
+        meta:
+          id: req_c03db512f7f7475e9f6ae7d57355a724
+          created: 1782435583548
+          modified: 1782602681146
+          isPrivate: false
+          description: ""
+          sortKey: -1782428183121.9062
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+            	"canal": "APP",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-25T12:00:00",
+            	"consentimentoFidelizacao": false,
+            	"pontosDesejados": 99999,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 1
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteFidelidadeAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 201', () => {
+                insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            // Environment updates
+
+            insomnia.environment.set("idPedidoResgateTeto",
+            insomnia.response.json().id);
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Com Resgate Sem Saldo
+        meta:
+          id: req_68561ee5c2e9470e98c55ebba620e031
+          created: 1782436312408
+          modified: 1782602685607
+          isPrivate: false
+          description: ""
+          sortKey: -1782428058925.9375
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+            	"canal": "APP",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-25T12:00:00",
+            	"consentimentoFidelizacao": false,
+            	"pontosDesejados": 500,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 1
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteSaldoBaixoAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 201', () => {
+                insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            // Environment updates
+
+            insomnia.environment.set("idPedidoResgateSemSaldo",
+            insomnia.response.json().id);
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Com Acúmulo
+        meta:
+          id: req_b7123897f9ca4cb5a0cdde47b03e8d8e
+          created: 1782511707186
+          modified: 1782612684144
+          isPrivate: false
+          description: ""
+          sortKey: -1782428058825.9375
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+            	"canal": "APP",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-25T12:00:00",
+            	"consentimentoFidelizacao": true,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 1
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteFidelidadeAccessToken }}"
+        scripts:
+          afterResponse: >-
+            // Tests
+
+
+            insomnia.test('Status deve ser 201', () => {
+                insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            // Environment updates
+
+            insomnia.environment.set("idPedidoComAcumulo",
+            insomnia.response.json().id);
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Sem Acúmulo
+        meta:
+          id: req_5c81d9aa4b494fec85de7e10b3226f1c
+          created: 1782511830454
+          modified: 1782612698925
+          isPrivate: false
+          description: ""
+          sortKey: -1782427935079.9688
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+            	"canal": "APP",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-25T12:00:00",
+            	"consentimentoFidelizacao": false,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 1
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteFidelidadeAccessToken }}"
+        scripts:
+          afterResponse: >-
+            // Tests
+
+
+            insomnia.test('Status deve ser 201', () => {
+                insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            // Environment updates
+
+            insomnia.environment.set("idPedidoSemAcumulo",
+            insomnia.response.json().id);
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Horário Preparo Sem Pickup
+        meta:
+          id: req_ff71b10164e94d2dbcda3bae4986b74c
+          created: 1782511876573
+          modified: 1782602692282
+          isPrivate: false
+          description: ""
+          sortKey: -1782427934979.9688
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+            	"canal": "APP",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-25T12:00:00",
+            	"horarioPreparo": "2026-06-25T12:30:00",
+            	"consentimentoFidelizacao": false,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 1
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 400', () => {
+                insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+
+
+            insomnia.test('Body deve conter error = VALIDACAO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'VALIDACAO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Horário Preparo Com Pickup
+        meta:
+          id: req_f98bcca22a334784b169da0d221752a4
+          created: 1782512861903
+          modified: 1782602694874
+          isPrivate: false
+          description: ""
+          sortKey: -1782427873156.9844
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+            	"canal": "APP",
+            	"pickup": true,
+            	"horarioPedido": "2026-06-25T12:00:00",
+            	"horarioPreparo": "2026-06-25T12:30:00",
+            	"consentimentoFidelizacao": false,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 1
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 201', () => {
+                insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            // Environment updates
+
+            insomnia.environment.set("idPedidoPickup",
+            insomnia.response.json().id);
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Horário Preparo Com Pickup Fora do Funcionamento da Loja
+        meta:
+          id: req_c9ed57c33aca4f5db18b49be6a7926a2
+          created: 1782512882839
+          modified: 1782602697065
+          isPrivate: false
+          description: ""
+          sortKey: -1782427842245.4922
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+            	"canal": "APP",
+            	"pickup": true,
+            	"horarioPedido": "2026-06-25T12:00:00",
+            	"horarioPreparo": "2026-06-26T04:30:00",
+            	"consentimentoFidelizacao": false,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 1
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 400', () => {
+                insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+
+
+            insomnia.test('Body deve conter error = VALIDACAO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'VALIDACAO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Balcão Sem Nome Cliente
+        meta:
+          id: req_4bbb9daf726e48349e995b19f714a468
+          created: 1782514397036
+          modified: 1782602698882
+          isPrivate: false
+          description: ""
+          sortKey: -1782427826789.746
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"canal": "BALCAO",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-25T12:00:00",
+            	"consentimentoFidelizacao": false,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 1
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.funcionarioAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 400', () => {
+                insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+
+
+            insomnia.test('Body deve conter error = VALIDACAO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'VALIDACAO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Balcão Com CPF Inválido
+        meta:
+          id: req_433b9a1a11f74b8ea843218bf9063886
+          created: 1782514480982
+          modified: 1782602700685
+          isPrivate: false
+          description: ""
+          sortKey: -1782427819061.873
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"canal": "BALCAO",
+            	"nomeCliente": "Cliente Teste",
+            	"cpfCliente": "11111111111",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-25T12:00:00",
+            	"consentimentoFidelizacao": true,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 1
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.funcionarioAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 400', () => {
+                insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+
+
+            insomnia.test('Body deve conter error = ERRO_VALIDACAO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'ERRO_VALIDACAO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Com Quantidade Inválida
+        meta:
+          id: req_a91ee3d855d54799b16ff47900b16c73
+          created: 1782514538285
+          modified: 1782602702818
+          isPrivate: false
+          description: ""
+          sortKey: -1782427815197.9365
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+            	"canal": "APP",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-25T12:00:00",
+            	"consentimentoFidelizacao": false,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 0
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.funcionarioAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 400', () => {
+                insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+
+
+            insomnia.test('Body deve conter error = ERRO_VALIDACAO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'ERRO_VALIDACAO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Criar Pedido Sem Canal e Horário
+        meta:
+          id: req_1cedc7e672404d35b14294813072e89f
+          created: 1782514578274
+          modified: 1782602704374
+          isPrivate: false
+          description: ""
+          sortKey: -1782427813265.9683
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+            	"pickup": false,
+            	"consentimentoFidelizacao": false,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 1
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.funcionarioAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 400', () => {
+                insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+
+
+            insomnia.test('Body deve conter error = ERRO_VALIDACAO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'ERRO_VALIDACAO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/00000000-0000-0000-0000-000000000000
+        name: Obter Pedido Inexistente
+        meta:
+          id: req_1fd70e3cb38b42a3ad124a72e3c535e7
+          created: 1782602800000
+          modified: 1782602800000
+          isPrivate: false
+          description: ""
+          sortKey: -1782427812700
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 404', () => {
+                insomnia.expect(insomnia.response.code).to.eql(404);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedidoCliente }}
+        name: Obter Pedido Como Funcionário da Unidade
+        meta:
+          id: req_576f6c006fdd4468a7be928bb9980473
+          created: 1782602800000
+          modified: 1782602800000
+          isPrivate: false
+          description: ""
+          sortKey: -1782427812600
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.funcionarioAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedidoBalcao }}
+        name: Obter e Verificar Pedido Balcao
+        meta:
+          id: req_5dbff17c53994b33982afb9089ddd2d9
+          created: 1782602800000
+          modified: 1782605517288
+          isPrivate: false
+          description: ""
+          sortKey: -1782429795069.1
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.funcionarioAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            const body = insomnia.response.json();
+
+
+            insomnia.test('valorTotal deve ser 3590', () => {
+                insomnia.expect(body).to.have.property('valorTotal', 3590);
+            });
+
+
+            insomnia.test('valorFinal deve ser 3590', () => {
+                insomnia.expect(body).to.have.property('valorFinal', 3590);
+            });
+
+
+            insomnia.test('status deve ser PAGAMENTO_PENDENTE', () => {
+                insomnia.expect(body).to.have.property('status', 'PAGAMENTO_PENDENTE');
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedidoResgate }}
+        name: Obter Pedido de Outro Cliente
+        meta:
+          id: req_6181ff00737842ceb7524c488cd8576d
+          created: 1782602800000
+          modified: 1782602800000
+          isPrivate: false
+          description: ""
+          sortKey: -1782427812800
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 404', () => {
+                insomnia.expect(insomnia.response.code).to.eql(404);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedidoPickup }}
+        name: Obter e Verificar Pedido Pickup
+        meta:
+          id: req_93f6b096db944185b527ad1a631bab81
+          created: 1782602800000
+          modified: 1782605537712
+          isPrivate: false
+          description: ""
+          sortKey: -1782427873156.5845
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            const body = insomnia.response.json();
+
+
+            insomnia.test('horarioPreparo deve ser 2026-06-25T12:30:00', () => {
+                insomnia.expect(body).to.have.property('horarioPreparo', '2026-06-25T12:30:00');
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedidoResgateSemSaldo }}
+        name: Obter e Verificar Pedido Resgate Sem Saldo
+        meta:
+          id: req_990d154a3b1440219a9b8c8e4c9adfe0
+          created: 1782602800000
+          modified: 1782602800000
+          isPrivate: false
+          description: ""
+          sortKey: -1782428058925.5376
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteSaldoBaixoAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            const body = insomnia.response.json();
+
+
+            insomnia.test('valorTotal deve ser 3590', () => {
+                insomnia.expect(body).to.have.property('valorTotal', 3590);
+            });
+
+
+            insomnia.test('valorDescontoPontos deve ser 50', () => {
+                insomnia.expect(body).to.have.property('valorDescontoPontos', 50);
+            });
+
+
+            insomnia.test('valorFinal deve ser 3540', () => {
+                insomnia.expect(body).to.have.property('valorFinal', 3540);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedidoPromocao }}
+        name: Obter e Verificar Pedido Com Promoção
+        meta:
+          id: req_a3ba64b836d840149e4bdaf65cb79e40
+          created: 1782602800000
+          modified: 1782602800000
+          isPrivate: false
+          description: ""
+          sortKey: -1782429795169.1
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            const body = insomnia.response.json();
+
+
+            insomnia.test('valorTotal deve ser 4160', () => {
+                insomnia.expect(body).to.have.property('valorTotal', 4160);
+            });
+
+
+            insomnia.test('valorDescontoPromocao deve ser 624', () => {
+                insomnia.expect(body).to.have.property('valorDescontoPromocao', 624);
+            });
+
+
+            insomnia.test('valorFinal deve ser 3536', () => {
+                insomnia.expect(body).to.have.property('valorFinal', 3536);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedidoCliente }}
+        name: Obter e Verificar Pedido Cliente
+        meta:
+          id: req_a9ce6ae6c3a74a668fcee1c42cc7167c
+          created: 1782602800000
+          modified: 1782651198363
+          isPrivate: false
+          description: ""
+          sortKey: -1782431779204.6
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            const body = insomnia.response.json();
+
+
+            insomnia.test('valorTotal deve ser 7180', () => {
+                insomnia.expect(body).to.have.property('valorTotal', 7180);
+            });
+
+
+            insomnia.test('valorDescontoPromocao deve ser 0', () => {
+                insomnia.expect(body).to.have.property('valorDescontoPromocao', 0);
+            });
+
+
+            insomnia.test('valorDescontoPontos deve ser 0', () => {
+                insomnia.expect(body).to.have.property('valorDescontoPontos', 0);
+            });
+
+
+            insomnia.test('valorFinal deve ser 7180', () => {
+                insomnia.expect(body).to.have.property('valorFinal', 7180);
+            });
+
+
+            insomnia.test('status deve ser PAGAMENTO_PENDENTE', () => {
+                insomnia.expect(body).to.have.property('status', 'PAGAMENTO_PENDENTE');
+            });
+
+
+            insomnia.test('deve conter 1 item', () => {
+                insomnia.expect(body.itens).to.have.lengthOf(1);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedidoResgateTeto }}
+        name: Obter e Verificar Pedido Resgate Acima do Teto
+        meta:
+          id: req_af57a82c3d34420b859f672f51847f38
+          created: 1782602800000
+          modified: 1782602800000
+          isPrivate: false
+          description: ""
+          sortKey: -1782428183121.5063
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteFidelidadeAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            const body = insomnia.response.json();
+
+
+            insomnia.test('valorTotal deve ser 3590', () => {
+                insomnia.expect(body).to.have.property('valorTotal', 3590);
+            });
+
+
+            insomnia.test('valorDescontoPontos deve ser 718', () => {
+                insomnia.expect(body).to.have.property('valorDescontoPontos', 718);
+            });
+
+
+            insomnia.test('valorFinal deve ser 2872', () => {
+                insomnia.expect(body).to.have.property('valorFinal', 2872);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedidoResgate }}
+        name: Obter Pedido Como Admin
+        meta:
+          id: req_b55d5c3047594c2a9a730ff4859c1b4d
+          created: 1782602800000
+          modified: 1782602800000
+          isPrivate: false
+          description: ""
+          sortKey: -1782427812500
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.adminAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedidoCliente }}
+        name: Obter Pedido (dono)
+        meta:
+          id: req_c1c9e97d276d4ecd93d9b8556209e6f8
+          created: 1782602800000
+          modified: 1782605557217
+          isPrivate: false
+          description: ""
+          sortKey: -1782427813000
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            const body = insomnia.response.json();
+
+
+            insomnia.test('status deve ser PAGAMENTO_PENDENTE', () => {
+                insomnia.expect(body).to.have.property('status', 'PAGAMENTO_PENDENTE');
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedidoCliente }}
+        name: Obter Pedido Sem Autenticação
+        meta:
+          id: req_da332b5df4344d13bc79f7867edf5a8a
+          created: 1782602800000
+          modified: 1782602800000
+          isPrivate: false
+          description: ""
+          sortKey: -1782427812900
+        method: GET
+        authentication:
+          type: bearer
+          disabled: true
+          token: ""
+          prefix: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 401', () => {
+                insomnia.expect(insomnia.response.code).to.eql(401);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedidoBalcaoCpf }}
+        name: Obter e Verificar Pedido Balcao CPF
+        meta:
+          id: req_dc21dba315c0453b9ef08603ada8de72
+          created: 1782602800000
+          modified: 1782602800000
+          isPrivate: false
+          description: ""
+          sortKey: -1782428803201.35
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.funcionarioAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            const body = insomnia.response.json();
+
+
+            insomnia.test('valorTotal deve ser 4160', () => {
+                insomnia.expect(body).to.have.property('valorTotal', 4160);
+            });
+
+
+            insomnia.test('valorDescontoPromocao deve ser 624', () => {
+                insomnia.expect(body).to.have.property('valorDescontoPromocao', 624);
+            });
+
+
+            insomnia.test('clienteFidelidadeId deve estar preenchido', () => {
+                insomnia.expect(body.clienteFidelidadeId).to.not.be.null;
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedidoResgate }}
+        name: Obter e Verificar Pedido Resgate Pontos
+        meta:
+          id: req_fc7dcd13192e45d5bd5cfd30e1cb336f
+          created: 1782602800000
+          modified: 1782602800000
+          isPrivate: false
+          description: ""
+          sortKey: -1782428307117.475
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteFidelidadeAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            const body = insomnia.response.json();
+
+
+            insomnia.test('valorTotal deve ser 7180', () => {
+                insomnia.expect(body).to.have.property('valorTotal', 7180);
+            });
+
+
+            insomnia.test('valorDescontoPontos deve ser 100', () => {
+                insomnia.expect(body).to.have.property('valorDescontoPontos', 100);
+            });
+
+
+            insomnia.test('valorFinal deve ser 7080', () => {
+                insomnia.expect(body).to.have.property('valorFinal', 7080);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/fidelidade/extrato
+        name: Obter Extrato Fidelidade Depois
+        meta:
+          id: req_2802910bc69c44f0ac801e8bacfa1114
+          created: 1782611823007
+          modified: 1782612906415
+          isPrivate: false
+          description: ""
+          sortKey: -1782427996952.9531
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteFidelidadeAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+            const body = insomnia.response.json();
+
+            insomnia.test('saldoPontos deve ser 99254', () => {
+                insomnia.expect(body).to.have.property('saldoPontos', 99254);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/fidelidade/extrato
+        name: Obter Extrato Fidelidade Antes
+        meta:
+          id: req_caf7247fc9bc41b68f93516e5a8dce86
+          created: 1782612062790
+          modified: 1782612066902
+          isPrivate: false
+          description: ""
+          sortKey: -1782428058875.7375
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteFidelidadeAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            // const body = insomnia.response.json();
+
+
+            // insomnia.test('valorTotal deve ser 3590', () => {
+
+            //     insomnia.expect(body).to.have.property('valorTotal', 3590);
+
+            // });
+
+
+            // insomnia.test('valorDescontoPontos deve ser 50', () => {
+
+            //     insomnia.expect(body).to.have.property('valorDescontoPontos',
+            50);
+
+            // });
+
+
+            // insomnia.test('valorFinal deve ser 3540', () => {
+
+            //     insomnia.expect(body).to.have.property('valorFinal', 3540);
+
+            // });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/fidelidade/extrato
+        name: Obter Extrato Fidelidade
+        meta:
+          id: req_a91d04ab25684ff19c411e566057a906
+          created: 1782612120774
+          modified: 1782613011735
+          isPrivate: false
+          description: ""
+          sortKey: -1782427935029.9688
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteFidelidadeAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+            const body = insomnia.response.json();
+
+            insomnia.test('saldoPontos deve ser 99254', () => {
+                insomnia.expect(body).to.have.property('saldoPontos', 99254);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pagamentos
+        name: Pagar Pedido Com Acúmulo
+        meta:
+          id: req_2b448620abca43f4b188cc044d57f1e0
+          created: 1782612717155
+          modified: 1782612857995
+          isPrivate: false
+          description: ""
+          sortKey: -1782428027889.4453
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"pedidoId": "{{ _.idPedidoComAcumulo }}",
+            	"formaPagamento": "CARTAO_CREDITO",
+            	"token": "OK"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: pedido-acumulo
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteFidelidadeAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            insomnia.test('Body deve conter statusPagamento = APROVADO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('statusPagamento', 'APROVADO');
+            });
+
+
+            insomnia.test('Body deve conter statusPedido = AGUARDANDO_PREPARO',
+            () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('statusPedido', 'AGUARDANDO_PREPARO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pagamentos
+        name: Pagar Pedido Sem Acúmulo
+        meta:
+          id: req_3f677806bc434b87928af1324f5796cd
+          created: 1782612936564
+          modified: 1782612969792
+          isPrivate: false
+          description: ""
+          sortKey: -1782427935054.9688
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"pedidoId": "{{ _.idPedidoSemAcumulo }}",
+            	"formaPagamento": "CARTAO_CREDITO",
+            	"token": "OK"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: pedido-sem-acumulo
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteFidelidadeAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            insomnia.test('Body deve conter statusPagamento = APROVADO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('statusPagamento', 'APROVADO');
+            });
+
+
+            insomnia.test('Body deve conter statusPedido = AGUARDANDO_PREPARO',
+            () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('statusPedido', 'AGUARDANDO_PREPARO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos?canalPedido=APP
+        name: Obter Todos os Pedidos Como Admin
+        meta:
+          id: req_462cd3d1e18b49999f94e56b4592aa44
+          created: 1782696261971
+          modified: 1782696443567
+          isPrivate: false
+          description: ""
+          sortKey: -1782427811917
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.adminAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos?canalPedido=APP
+        name: Obter Pedidos Como Cliente
+        meta:
+          id: req_ed969e7501644d16b527e310cb0a5878
+          created: 1782696467828
+          modified: 1782696494275
+          isPrivate: false
+          description: ""
+          sortKey: -1782427811625.5
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos?canalPedido=APP
+        name: Obter Pedidos Como Funcionario - Canal APP
+        meta:
+          id: req_fcb50641dac8402bb4b1d5511a52ef4b
+          created: 1782696502684
+          modified: 1782696810783
+          isPrivate: false
+          description: ""
+          sortKey: -1782427811479.75
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.funcionarioAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos?canalPedido=APP
+        name: Obter Pedidos Sem Autenticacao
+        meta:
+          id: req_4d3b3052388449ee9517b24aa753516a
+          created: 1782696527264
+          modified: 1782696544677
+          isPrivate: false
+          description: ""
+          sortKey: -1782427811406.875
+        method: GET
+        authentication:
+          type: bearer
+          disabled: true
+          token: ""
+          prefix: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 401', () => {
+                insomnia.expect(insomnia.response.code).to.eql(401);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos?canalPedido=BALCAO
+        name: Obter Pedidos Como Funcionario - Canal BALCAO
+        meta:
+          id: req_ad488ed1819748af920166068a03c78a
+          created: 1782696819422
+          modified: 1782696825042
+          isPrivate: false
+          description: ""
+          sortKey: -1782427811443.3125
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.funcionarioAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Pagamentos
+    meta:
+      id: fld_9af2b87b45644f638f062cc4ad286579
+      created: 1782585043529
+      modified: 1782771672696
+      sortKey: -1782647185476
+      description: ""
+    children:
+      - url: http://localhost:8080/pagamentos
+        name: Pagar Sem Autenticação
+        meta:
+          id: req_20c4f444fc034f849f13da4337bd3e02
+          created: 1782586867375
+          modified: 1782602717530
+          isPrivate: false
+          description: ""
+          sortKey: -1782586870639
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"pedidoId": "{{ _.idPedido_1 }}",
+            	"formaPagamento": "PIX",
+            	"token": "OK"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: 11111111-1111-1111-1111-111111111111
+        authentication:
+          type: bearer
+          disabled: true
+          token: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 401', () => {
+                insomnia.expect(insomnia.response.code).to.eql(401);
+            });
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pagamentos
+        name: Pagar Cliente PIX
+        meta:
+          id: req_a3768440cb9841129085a8ea1c6e2295
+          created: 1782587135138
+          modified: 1782602719440
+          isPrivate: false
+          description: ""
+          sortKey: -1782509324922
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"pedidoId": "{{ _.idPedido_1 }}",
+            	"formaPagamento": "PIX",
+            	"token": "OK"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: 22222222-2222-2222-2222-222222222222
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 202', () => {
+                insomnia.expect(insomnia.response.code).to.eql(202);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            insomnia.test('Body deve conter statusPagamento = PENDENTE', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('statusPagamento', 'PENDENTE');
+            });
+
+
+            // Environment updates
+
+            insomnia.environment.set("transacaoIdPix", "pix-" +
+            insomnia.environment.get("idPedido_1"));
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pagamentos
+        name: Pagar Cliente Cartão Aprovado
+        meta:
+          id: req_38ea223e7103406eaa96e0b6fa863963
+          created: 1782587334947
+          modified: 1782602722044
+          isPrivate: false
+          description: ""
+          sortKey: -1782470552063.5
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"pedidoId": "{{ _.idPedido_2 }}",
+            	"formaPagamento": "CARTAO_CREDITO",
+            	"token": "OK"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: 33333333-3333-3333-3333-333333333333
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            insomnia.test('Body deve conter statusPagamento = APROVADO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('statusPagamento', 'APROVADO');
+            });
+
+
+            insomnia.test('Body deve conter statusPedido = AGUARDANDO_PREPARO',
+            () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('statusPedido', 'AGUARDANDO_PREPARO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Setup Pedido para Cartão Recusado
+        meta:
+          id: req_e030848a508b410dba61fe8a4587b04d
+          created: 1782588000000
+          modified: 1782596272277
+          isPrivate: false
+          description: ""
+          sortKey: -1782586870642
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+              "canal": "APP",
+              "pickup": false,
+              "horarioPedido": "2026-06-25T12:00:00",
+              "consentimentoFidelizacao": false,
+              "pontosDesejados": 0,
+              "itens": [
+                {
+                  "pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+                  "quantidade": 1
+                }
+              ]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 201', () => {
+                insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            // Environment updates
+
+            insomnia.environment.set("idPedidoRecusa",
+            insomnia.response.json().id);
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Setup Pedido para Erro Técnico
+        meta:
+          id: req_4fe3b322e3c54abbbefcc1962c7e0323
+          created: 1782588000001
+          modified: 1782596269718
+          isPrivate: false
+          description: ""
+          sortKey: -1782586870641
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+              "canal": "APP",
+              "pickup": false,
+              "horarioPedido": "2026-06-25T12:00:00",
+              "consentimentoFidelizacao": false,
+              "pontosDesejados": 0,
+              "itens": [
+                {
+                  "pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+                  "quantidade": 1
+                }
+              ]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 201', () => {
+                insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            // Environment updates
+
+            insomnia.environment.set("idPedidoErro",
+            insomnia.response.json().id);
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Setup Pedido de Outro Cliente
+        meta:
+          id: req_6e6afdaf9c7346688789d1ebdfdf291a
+          created: 1782588000002
+          modified: 1782596265756
+          isPrivate: false
+          description: ""
+          sortKey: -1782586870640
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+              "canal": "APP",
+              "pickup": false,
+              "horarioPedido": "2026-06-25T12:00:00",
+              "consentimentoFidelizacao": false,
+              "pontosDesejados": 0,
+              "itens": [
+                {
+                  "pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+                  "quantidade": 1
+                }
+              ]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteFidelidadeAccessToken }}"
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 201', () => {
+                insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            // Environment updates
+
+            insomnia.environment.set("idPedidoOutro",
+            insomnia.response.json().id);
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pagamentos
+        name: Pagar Cliente Cartão Recusado
+        meta:
+          id: req_477289c419e9448e81e6f36e50898e39
+          created: 1782588000003
+          modified: 1782602724031
+          isPrivate: false
+          description: ""
+          sortKey: -1782470000000
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"pedidoId": "{{ _.idPedidoRecusa }}",
+            	"formaPagamento": "CARTAO_DEBITO",
+            	"token": "RECUSAR"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: 44444444-4444-4444-4444-444444444444
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            insomnia.test('Body deve conter statusPagamento = RECUSADO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('statusPagamento', 'RECUSADO');
+            });
+
+
+            insomnia.test('Body deve conter motivoRecusa', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('motivoRecusa');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pagamentos
+        name: Pagar Cliente Cartão Erro Técnico
+        meta:
+          id: req_15d6038182f34076abf11d1a41f647d6
+          created: 1782588000004
+          modified: 1782602726260
+          isPrivate: false
+          description: ""
+          sortKey: -1782460000000
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"pedidoId": "{{ _.idPedidoErro }}",
+            	"formaPagamento": "CARTAO_CREDITO",
+            	"token": "ERRO"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: 55555555-5555-5555-5555-555555555555
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            insomnia.test('Body deve conter statusPagamento = ERRO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('statusPagamento', 'ERRO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pagamentos
+        name: Repetir Cartão Aprovado (idempotência)
+        meta:
+          id: req_c35e5106ccd94231b5ed2167e9bedf85
+          created: 1782588000005
+          modified: 1782602728389
+          isPrivate: false
+          description: ""
+          sortKey: -1782450000000
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"pedidoId": "{{ _.idPedido_2 }}",
+            	"formaPagamento": "CARTAO_CREDITO",
+            	"token": "OK"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: 33333333-3333-3333-3333-333333333333
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+
+            insomnia.test('Body deve conter statusPagamento = APROVADO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('statusPagamento', 'APROVADO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pagamentos
+        name: Pagar Pedido Inexistente
+        meta:
+          id: req_1d885e7f74954bd38f059b370c4eea42
+          created: 1782588000006
+          modified: 1782602730999
+          isPrivate: false
+          description: ""
+          sortKey: -1782440000000
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"pedidoId": "00000000-0000-0000-0000-000000000000",
+            	"formaPagamento": "PIX",
+            	"token": "OK"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: 77777777-7777-7777-7777-777777777777
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 400', () => {
+                insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+
+
+            insomnia.test('Body deve conter error = VALIDACAO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'VALIDACAO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pagamentos
+        name: Pagar Pedido de Outro Cliente
+        meta:
+          id: req_39471ef3eb6047c2aedabd0a9623deec
+          created: 1782588000007
+          modified: 1782602733140
+          isPrivate: false
+          description: ""
+          sortKey: -1782430000000
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"pedidoId": "{{ _.idPedidoOutro }}",
+            	"formaPagamento": "PIX",
+            	"token": "OK"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: 88888888-8888-8888-8888-888888888888
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 403', () => {
+                insomnia.expect(insomnia.response.code).to.eql(403);
+            });
+
+
+            insomnia.test('Body deve conter error = ACESSO_NEGADO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'ACESSO_NEGADO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pagamentos
+        name: Pagar Pedido Já Pago
+        meta:
+          id: req_7ec01dcd3cee420f9102e5579d3b7939
+          created: 1782588000008
+          modified: 1782602735077
+          isPrivate: false
+          description: ""
+          sortKey: -1782420000000
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"pedidoId": "{{ _.idPedido_2 }}",
+            	"formaPagamento": "CARTAO_CREDITO",
+            	"token": "OK"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: 99999999-9999-9999-9999-999999999999
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 400', () => {
+                insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+
+
+            insomnia.test('Body deve conter error = VALIDACAO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'VALIDACAO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pagamentos
+        name: Pagar Sem Idempotency-Key
+        meta:
+          id: req_4f40a882697046fb8836badb087af915
+          created: 1782588000009
+          modified: 1782670461827
+          isPrivate: false
+          description: ""
+          sortKey: -1782410000000
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"pedidoId": "{{ _.idPedido_1 }}",
+            	"formaPagamento": "PIX",
+            	"token": "OK"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            // Tests
+
+
+            insomnia.test('Status deve ser 400', () => {
+                insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+
+
+            insomnia.test('Body deve conter error = ERRO_VALIDACAO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'ERRO_VALIDACAO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pagamentos
+        name: Pagar Cartão Sem Token
+        meta:
+          id: req_a026842392d04709a776e47b6e62acad
+          created: 1782588000010
+          modified: 1782602738808
+          isPrivate: false
+          description: ""
+          sortKey: -1782400000000
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"pedidoId": "{{ _.idPedido_1 }}",
+            	"formaPagamento": "CARTAO_CREDITO"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 400', () => {
+                insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+
+
+            insomnia.test('Body deve conter error = VALIDACAO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'VALIDACAO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Setup Pedido para PIX
+        meta:
+          id: req_bd37e39c35fb4c86846463e753ef3e17
+          created: 1782588000015
+          modified: 1782602707494
+          isPrivate: false
+          description: ""
+          sortKey: -1782586870644
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+            	"canal": "APP",
+            	"pickup": false,
+            	"horarioPedido": "2026-06-25T12:00:00",
+            	"consentimentoFidelizacao": true,
+            	"pontosDesejados": 0,
+            	"itens": [
+            		{
+            			"pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+            			"quantidade": 1
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 201', () => {
+                insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+            // Environment updates
+            insomnia.environment.set("idPedido_1", insomnia.response.json().id);
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos
+        name: Setup Pedido para Cartão
+        meta:
+          id: req_b8ee5b41bd6e4a3aa6439821e3446cfb
+          created: 1782588000016
+          modified: 1782596274948
+          isPrivate: false
+          description: ""
+          sortKey: -1782586870643
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "unidadeId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+              "canal": "APP",
+              "pickup": false,
+              "horarioPedido": "2026-06-25T12:00:00",
+              "consentimentoFidelizacao": false,
+              "pontosDesejados": 0,
+              "itens": [
+                {
+                  "pratoId": "581fd7ef-56d3-4ac4-832b-b8953c3736fb",
+                  "quantidade": 1
+                }
+              ]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 201', () => {
+                insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+            insomnia.test('Body deve conter id', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('id');
+            });
+
+            // Environment updates
+            insomnia.environment.set("idPedido_2", insomnia.response.json().id);
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedido_2 }}
+        name: Obter Pedido Após Pagamento
+        meta:
+          id: req_c0afe0c241f84e2ead2f0b35f8042f0f
+          created: 1782602800000
+          modified: 1782605580292
+          isPrivate: false
+          description: ""
+          sortKey: -1782470500000
+        method: GET
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+
+            const body = insomnia.response.json();
+
+
+            insomnia.test('status deve ser AGUARDANDO_PREPARO', () => {
+                insomnia.expect(body).to.have.property('status', 'AGUARDANDO_PREPARO');
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Webhook
+    meta:
+      id: fld_a1f56cd566464b008559f4e58ba0170b
+      created: 1782585074631
+      modified: 1782771747633
+      sortKey: -1782647185463.5
+      description: ""
+    children:
+      - url: http://localhost:8080/webhooks/pagamentos/pix
+        name: Confirmar PIX
+        meta:
+          id: req_004c06cd8aa046b2b5115108f049f673
+          created: 1782588000011
+          modified: 1782771745519
+          isPrivate: false
+          description: ""
+          sortKey: -1782585074630
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"transacaoId": "{{ _.transacaoIdPix }}",
+            	"pagoEm": "2026-06-25T12:05:00"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: X-Webhook-Secret
+            value: segredo-forte-para-autenticacao-no-webhook
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/webhooks/pagamentos/pix
+        name: Confirmar PIX com Secret Inválido
+        meta:
+          id: req_dedd1d8f162e42dcad8aa17064a31d3b
+          created: 1782588000012
+          modified: 1782602743676
+          isPrivate: false
+          description: ""
+          sortKey: -1782585074629
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"transacaoId": "{{ _.transacaoIdPix }}",
+            	"pagoEm": "2026-06-25T12:05:00"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: X-Webhook-Secret
+            value: segredo-errado
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 401', () => {
+                insomnia.expect(insomnia.response.code).to.eql(401);
+            });
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/webhooks/pagamentos/pix
+        name: Confirmar PIX Duplicado (idempotência)
+        meta:
+          id: req_9da13cfbf8e74476a18f47c3b1e8fa0d
+          created: 1782588000013
+          modified: 1782771767910
+          isPrivate: false
+          description: ""
+          sortKey: -1782585074628
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"transacaoId": "{{ _.transacaoIdPix }}",
+            	"pagoEm": "2026-06-25T12:05:00"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: X-Webhook-Secret
+            value: segredo-forte-para-autenticacao-no-webhook
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/webhooks/pagamentos/pix
+        name: Confirmar PIX Transação Inexistente
+        meta:
+          id: req_56d191e88f69483d8557fbd33b85cf68
+          created: 1782588000014
+          modified: 1782771773114
+          isPrivate: false
+          description: ""
+          sortKey: -1782585074627
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"transacaoId": "transacao-que-nao-existe",
+            	"pagoEm": "2026-06-25T12:05:00"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: X-Webhook-Secret
+            value: segredo-forte-para-autenticacao-no-webhook
+        scripts:
+          afterResponse: >
+            // Tests
+
+
+            insomnia.test('Status deve ser 400', () => {
+                insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+
+
+            insomnia.test('Body deve conter error = VALIDACAO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'VALIDACAO');
+            });
+
+
+            // Environment updates
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Avançar Status Pedido
+    meta:
+      id: fld_ed4a8eba8cf643169ef272e4fd6185b5
+      created: 1782647185451
+      modified: 1782771673843
+      sortKey: -1782647185451
+      description: ""
+    children:
+      - url: http://localhost:8080/pedidos/{{ _.idPedido_2 }}/avancar
+        name: Avançar Status Pedido (AGUARDANDO_PREPRADO -> EM_PREPARO)
+        meta:
+          id: req_5bc8e3246a9749d7b6c90539c322d28a
+          created: 1782647203188
+          modified: 1782647463134
+          isPrivate: false
+          description: ""
+          sortKey: -1782647203188
+        method: PATCH
+        authentication:
+          type: bearer
+          token: "{{ _.funcionarioAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+            const body = insomnia.response.json();
+
+            insomnia.test('status deve ser EM_PREPARO', () => {
+                insomnia.expect(body).to.have.property('status', 'EM_PREPARO');
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedido_2 }}/avancar
+        name: Avançar Status Pedido (EM_PREPARO -> PRONTO)
+        meta:
+          id: req_fcdb7bcabe6e47e7891bab8afc5e7a8f
+          created: 1782647414564
+          modified: 1782647473217
+          isPrivate: false
+          description: ""
+          sortKey: -1782617036916
+        method: PATCH
+        authentication:
+          type: bearer
+          token: "{{ _.funcionarioAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+            const body = insomnia.response.json();
+
+            insomnia.test('status deve ser PRONTO', () => {
+                insomnia.expect(body).to.have.property('status', 'PRONTO');
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedido_2 }}/avancar
+        name: Avançar Status Pedido (PRONTO -> CONCLUIDO)
+        meta:
+          id: req_2e1fa752d64f42c2b12a60bc62dea7df
+          created: 1782647444422
+          modified: 1782647491227
+          isPrivate: false
+          description: ""
+          sortKey: -1782601953780
+        method: PATCH
+        authentication:
+          type: bearer
+          token: "{{ _.funcionarioAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+            const body = insomnia.response.json();
+
+            insomnia.test('status deve ser CONCLUIDO', () => {
+                insomnia.expect(body).to.have.property('status', 'CONCLUIDO');
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedido_2 }}/avancar
+        name: Avançar Status Pedido Já Concluído
+        meta:
+          id: req_1e1231a8783f4cb0a72fb76e83f0a0da
+          created: 1782647506249
+          modified: 1782647676863
+          isPrivate: false
+          description: ""
+          sortKey: -1782594412212
+        method: PATCH
+        authentication:
+          type: bearer
+          token: "{{ _.funcionarioAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >-
+            // Tests
+
+
+            insomnia.test('Status deve ser 400', () => {
+                insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+
+
+            const body = insomnia.response.json();
+
+
+            insomnia.test('Body deve conter error = VALIDACAO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'VALIDACAO');
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedido_2 }}/avancar
+        name: Avançar Status Pedido Cliente
+        meta:
+          id: req_b5081198c2f84d3d928657d5aeefedd8
+          created: 1782647636109
+          modified: 1782657899343
+          isPrivate: false
+          description: ""
+          sortKey: -1782590641428
+        method: PATCH
+        authentication:
+          type: bearer
+          token: "{{ _.clienteAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 403', () => {
+                insomnia.expect(insomnia.response.code).to.eql(403);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/pedidos/{{ _.idPedidoRecusa }}/avancar
+        name: Avançar Status Pedido com Pagamento Pendente
+        meta:
+          id: req_95a95a9e359a4619bbcf4b89795352bc
+          created: 1782647727543
+          modified: 1782647763056
+          isPrivate: false
+          description: ""
+          sortKey: -1782592526820
+        method: PATCH
+        authentication:
+          type: bearer
+          token: "{{ _.funcionarioAccessToken }}"
+          prefix: ""
+        scripts:
+          afterResponse: >-
+            // Tests
+
+
+            insomnia.test('Status deve ser 400', () => {
+                insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+
+
+            const body = insomnia.response.json();
+
+
+            insomnia.test('Body deve conter error = VALIDACAO', () => {
+                const jsonBody = insomnia.response.json();
+                insomnia.expect(jsonBody).to.have.property('error', 'VALIDACAO');
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Cardapio
+    meta:
+      id: fld_1f40a7e535034fcc89ac0c8195b33f19
+      created: 1782651156423
+      modified: 1782771660922
+      sortKey: -1782651156423
+      description: ""
+    children:
+      - url: http://localhost:8080/unidades/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11/cardapio
+        name: Obter Cardápio
+        meta:
+          id: req_aa94cb5b484b47aaa8113f6fb7c45fe6
+          created: 1782651180362
+          modified: 1782653045962
+          isPrivate: false
+          description: ""
+          sortKey: -1782651180362
+        method: GET
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+            const body = insomnia.response.json();
+
+            insomnia.test('deve conter 2 itens', () => {
+                insomnia.expect(body.items).to.have.lengthOf(2);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/unidades/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11/cardapio?size=1&page=2
+        name: Obter Cardápio Paginação
+        meta:
+          id: req_eef54c4ef61b40d091f24afe3bc0f1ca
+          created: 1782652758367
+          modified: 1782653040174
+          isPrivate: false
+          description: ""
+          sortKey: -1782649191775
+        method: GET
+        scripts:
+          afterResponse: |
+            // Tests
+
+            insomnia.test('Status deve ser 200', () => {
+                insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+            const body = insomnia.response.json();
+
+            insomnia.test('deve conter 1 item', () => {
+                insomnia.expect(body.items).to.have.lengthOf(1);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_a998615d05094cef972e2b9e8f426808
+    created: 1781995785116
+    modified: 1782771747631
+environments:
+  name: Base Environment
+  meta:
+    id: env_a98d6f48b1db4617928307f395abeee0
+    created: 1781995785116
+    modified: 1782771747632
+    isPrivate: false
+  data:
+    adminAccessToken: ""
+    clienteAccessToken: ""
+    funcionarioAccessToken: ""
+    clienteFidelidadeAccessToken: ""
+    clienteSaldoBaixoAccessToken: ""
+    idPedido_1: ""
+    idPedido_2: ""
+    idPedidoRecusa: ""
+    idPedidoErro: ""
+    idPedidoOutro: ""
+    transacaoIdPix: ""
+    idPedidoCliente: ""
+    idPedidoPromocao: ""
+    idPedidoBalcao: ""
+    idPedidoBalcaoCpf: ""
+    idPedidoResgate: ""
+    idPedidoResgateTeto: ""
+    idPedidoResgateSemSaldo: ""
+    idPedidoPickup: ""
+    idPedidoComAcumulo: ""
+    idPedidoSemAcumulo: ""
