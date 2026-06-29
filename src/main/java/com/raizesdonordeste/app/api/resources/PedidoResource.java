@@ -7,13 +7,13 @@ import com.raizesdonordeste.app.api.dto.PedidoResponse;
 import com.raizesdonordeste.app.api.error.ErrorResponse;
 import com.raizesdonordeste.app.application.usecases.AvancarStatusPedidoUseCase;
 import com.raizesdonordeste.app.application.usecases.CriarPedidoUseCase;
+import com.raizesdonordeste.app.application.usecases.ListarPedidosUseCase;
 import com.raizesdonordeste.app.application.usecases.ObterPedidoUseCase;
 import com.raizesdonordeste.app.domain.comum.model.Id;
+import com.raizesdonordeste.app.domain.comum.model.Pagina;
+import com.raizesdonordeste.app.domain.comum.model.Paginacao;
 import com.raizesdonordeste.app.domain.identidade.model.Role;
-import com.raizesdonordeste.app.domain.pedido.model.AvancarStatusPedidoComando;
-import com.raizesdonordeste.app.domain.pedido.model.CriarPedidoComando;
-import com.raizesdonordeste.app.domain.pedido.model.ObterPedidoComando;
-import com.raizesdonordeste.app.domain.pedido.model.StatusPedido;
+import com.raizesdonordeste.app.domain.pedido.model.*;
 import com.raizesdonordeste.app.infra.mapper.CriarPedidoComandoMapper;
 import com.raizesdonordeste.app.infra.mapper.PedidoResponseMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,6 +42,7 @@ public class PedidoResource {
     private final CriarPedidoComandoMapper criarPedidoComandoMapper;
     private final CriarPedidoUseCase criarPedidoUseCase;
     private final ObterPedidoUseCase obterPedidoUseCase;
+    private final ListarPedidosUseCase listarPedidosUseCase;
     private final PedidoResponseMapper pedidoResponseMapper;
     private final AvancarStatusPedidoUseCase avancarStatusPedidoUseCase;
 
@@ -90,6 +91,53 @@ public class PedidoResource {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new CriarPedidoResponse(id.toString()));
+    }
+
+    @Operation(
+            summary = "Listar pedidos",
+            description = "Lista de forma paginada os pedidos visíveis para a conta autenticada. " +
+                    "Clientes veem apenas seus pedidos, funcionários veem os pedidos da própria unidade " +
+                    "e administradores veem os pedidos de todas as unidades."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Pedidos listados com sucesso.",
+                    content = @Content(schema = @Schema(implementation = Pagina.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Parâmetros de consulta inválidos.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Token ausente ou inválido.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Erro inesperado.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @GetMapping
+    public Pagina<PedidoResponse> listarPedidos(@RequestParam(name = "canalPedido", required = false) CanalPedido canalPedido,
+                                                @RequestParam(name = "page", required = false) Integer pageParam,
+                                                @RequestParam(name = "size", required = false) Integer sizeParam,
+                                                JwtAuthenticationToken authentication) {
+        Jwt jwt = authentication.getToken();
+        Id contaId = Id.fromString(jwt.getSubject());
+        Role role = Role.valueOf(jwt.getClaimAsString(ROLE_CLAIM));
+
+        int page = (pageParam == null || pageParam < 1) ? 1 : pageParam;
+        int size = (sizeParam == null || sizeParam < 1) ? 10 : sizeParam;
+
+        Paginacao paginacao = new Paginacao(page, size);
+        ListarPedidosComando comando = new ListarPedidosComando(contaId, role, canalPedido, paginacao);
+
+        return listarPedidosUseCase.executar(comando)
+                .mapear(pedidoResponseMapper::toResponse);
     }
 
     @Operation(
