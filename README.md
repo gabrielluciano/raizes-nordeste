@@ -151,3 +151,13 @@ Caso deseje visualizar o Swagger sem executar o projeto, acesse o arquivo JSON d
 [`docs/swagger.json`](https://github.com/gabrielluciano/raizes-nordeste/blob/main/docs/swagger.json).
 
 O conteúdo desse arquivo pode ser copiado e colado no site https://editor.swagger.io/ para visualizar o Swagger.
+
+## Diagramas
+
+### Diagrama de Entidade-Relacionamento (DER)
+
+![Diagrama de Entidade-Relacionamento](docs/der.png)
+
+### Diagrama de Classes
+
+![Diagrama de Classes](docs/diagrama_classes.png)
