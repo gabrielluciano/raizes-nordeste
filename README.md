@@ -56,7 +56,7 @@ O projeto utiliza uma arquitetura em camadas (hexagonal). Camadas:
 5. Seed do banco de dados
 
    O seed do banco é executado automaticamente ao iniciar a aplicação através da migration
-   `src/main/resources/db/migration/V2__seed.sql`
+   [`src/main/resources/db/migration/V2__seed.sql`](https://github.com/gabrielluciano/raizes-nordeste/blob/main/src/main/resources/db/migration/V2__seed.sql)
 
 6. (Opcional) Encerrar os containers Docker, removendo os volumes.
 
@@ -69,7 +69,7 @@ O projeto utiliza uma arquitetura em camadas (hexagonal). Camadas:
 A aplicação já vem configurada para conectar no banco provisionado pelo `docker compose`, não sendo
 necessário nenhum ajuste manual.
 
-As credenciais estão definidas no `docker-compose.yml` e no `src/main/resources/application.yaml`.
+As credenciais estão definidas no [`docker-compose.yml`](https://github.com/gabrielluciano/raizes-nordeste/blob/main/docker-compose.yml) e no [`src/main/resources/application.yaml`](https://github.com/gabrielluciano/raizes-nordeste/blob/main/src/main/resources/application.yaml).
 
 Caso deseje acessar o banco para verificar os registros, use as credenciais abaixo:
 
@@ -85,7 +85,7 @@ Caso deseje acessar o banco para verificar os registros, use as credenciais abai
 ## Variáveis de ambiente
 
 A aplicação utiliza as variáveis de ambiente abaixo. Todas possuem **valores padrão** definidos no
-`src/main/resources/application.yaml`, assim **não é necessário nenhum setup de variáveis** para executar e testar o
+[`src/main/resources/application.yaml`](https://github.com/gabrielluciano/raizes-nordeste/blob/main/src/main/resources/application.yaml), assim **não é necessário nenhum setup de variáveis** para executar e testar o
 projeto, bastando iniciar a aplicação.
 
 | Variável         | Descrição                                                             |
@@ -147,3 +147,7 @@ Caso deseje visualizar o JSON no formato OpenAPI 3.1.0, acesse:
 
 - http://localhost:8080/v3/api-docs
 
+Caso deseje visualizar o Swagger sem executar o projeto, acesse o arquivo JSON disponibilizado em
+[`docs/swagger.json`](https://github.com/gabrielluciano/raizes-nordeste/blob/main/docs/swagger.json).
+
+O conteúdo desse arquivo pode ser copiado e colado no site https://editor.swagger.io/ para visualizar o Swagger.

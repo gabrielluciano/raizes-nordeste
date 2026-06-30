@@ -1,0 +1,1364 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Raízes do Nordeste Backend",
+    "description": "API do backend Raízes do Nordeste.",
+    "version": "0.0.1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Autenticação e Cadastro",
+      "description": "Cadastro e login de clientes e funcionários"
+    },
+    {
+      "name": "Fidelidade",
+      "description": "Programa de fidelidade do cliente"
+    },
+    {
+      "name": "Pagamentos",
+      "description": "Processamento de pagamentos de pedidos"
+    },
+    {
+      "name": "Cardápio",
+      "description": "Consulta de cardápio"
+    },
+    {
+      "name": "Webhooks",
+      "description": "Recebimento de notificações de gateways externos"
+    },
+    {
+      "name": "Administração de Funcionários",
+      "description": "Operações administrativas sobre funcionários"
+    },
+    {
+      "name": "Pedidos",
+      "description": "Endpoints para criação, consulta e atualização de pedidos."
+    }
+  ],
+  "paths": {
+    "/webhooks/pagamentos/pix": {
+      "post": {
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "Confirmar pagamento PIX",
+        "description": "Recebe a confirmação de pagamento PIX do gateway. Autenticado pelo header X-Webhook-Secret.",
+        "operationId": "confirmarPagamentoPix",
+        "parameters": [
+          {
+            "name": "X-Webhook-Secret",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmacaoPixRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Confirmação processada com sucesso."
+          },
+          "400": {
+            "description": "Payload inválido ou header X-Webhook-Secret ausente.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Secret do webhook inválido."
+          },
+          "500": {
+            "description": "Erro inesperado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/pedidos": {
+      "get": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Listar pedidos",
+        "description": "Lista de forma paginada os pedidos visíveis para a conta autenticada. Clientes veem apenas seus pedidos, funcionários veem os pedidos da própria unidade e administradores veem os pedidos de todas as unidades.",
+        "operationId": "listarPedidos",
+        "parameters": [
+          {
+            "name": "canalPedido",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "APP",
+                "TOTEM",
+                "BALCAO"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pedidos listados com sucesso.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pagina"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros de consulta inválidos.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente ou inválido.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro inesperado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Criar um novo pedido",
+        "description": "Cria um novo pedido para a conta autenticada.",
+        "operationId": "criar",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CriarPedidoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Pedido criado com sucesso.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CriarPedidoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados do pedido inválidos, prato inativo ou inexistente.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente ou inválido.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para criar pedidos.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro inesperado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pagamentos": {
+      "post": {
+        "tags": [
+          "Pagamentos"
+        ],
+        "summary": "Processar pagamento",
+        "description": "Processa um pagamento via cartão ou PIX. Exige o header Idempotency-Key.",
+        "operationId": "processarPagamento",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PagamentoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Pagamento com cartão processado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagamentoSincronoResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Pagamento PIX iniciado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagamentoAssincronoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados de pagamento inválidos ou header Idempotency-Key ausente.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente ou inválido.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para pagar.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro inesperado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "tags": [
+          "Autenticação e Cadastro"
+        ],
+        "summary": "Cadastro de cliente",
+        "description": "Cadastra um cliente e retorna o id gerado.",
+        "operationId": "cadastrar",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CadastroClienteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Cliente cadastrado com sucesso.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CadastroResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados de cadastro inválidos.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Já existe uma conta com o e-mail informado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro inesperado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Autenticação e Cadastro"
+        ],
+        "summary": "Login de cliente/funcionários",
+        "description": "Permite um cliente ou funcionário se autenticar.",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Login realizado com sucesso.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados de login inválidos.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Credenciais inválidas.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro inesperado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/admin/funcionarios": {
+      "post": {
+        "tags": [
+          "Administração de Funcionários"
+        ],
+        "summary": "Cadastro de funcionário",
+        "description": "Cria a conta de um funcionário. Requer permissão administrativa.",
+        "operationId": "cadastrar_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CadastroFuncionarioRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Funcionário cadastrado com sucesso.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CadastroResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados de cadastro inválidos.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente ou inválido.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para criar funcionários.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Já existe uma conta com o e-mail informado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro inesperado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos/{id}/avancar": {
+      "patch": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Avançar status do pedido",
+        "description": "Avança o pedido para o próximo status.",
+        "operationId": "avancarStatusPedido",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status do pedido avançado com sucesso.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvancarStatusPedidoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Id inválido, pedido não encontrado ou status não pode ser avançado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente ou inválido.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para avançar o status do pedido.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro inesperado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/unidades/{unidadeId}/cardapio": {
+      "get": {
+        "tags": [
+          "Cardápio"
+        ],
+        "summary": "Obter cardápio da unidade",
+        "description": "Lista os pratos ativos e disponíveis da unidade de forma paginada.",
+        "operationId": "obterCardapio",
+        "parameters": [
+          {
+            "name": "unidadeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cardápio retornado com sucesso.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pagina"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Id de unidade inválido.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro inesperado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/pedidos/{id}": {
+      "get": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Obter pedido",
+        "description": "Retorna os detalhes de um pedido visível para a conta autenticada.",
+        "operationId": "obterPedido",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pedido retornado com sucesso.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Id de pedido inválido.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente ou inválido.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pedido não encontrado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro inesperado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fidelidade/extrato": {
+      "get": {
+        "tags": [
+          "Fidelidade"
+        ],
+        "summary": "Obter extrato de fidelidade",
+        "description": "Retorna o extrato de pontos da conta autenticada.",
+        "operationId": "obterExtrato",
+        "responses": {
+          "200": {
+            "description": "Extrato obtido com sucesso.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtratoFidelidadeResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente ou inválido.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para consultar fidelidade.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro inesperado.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ConfirmacaoPixRequest": {
+        "type": "object",
+        "properties": {
+          "transacaoId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pagoEm": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "pagoEm",
+          "transacaoId"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldError"
+            }
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      },
+      "FieldError": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "issue": {
+            "type": "string"
+          }
+        }
+      },
+      "CriarPedidoRequest": {
+        "type": "object",
+        "properties": {
+          "unidadeId": {
+            "type": "string"
+          },
+          "canal": {
+            "type": "string",
+            "enum": [
+              "APP",
+              "TOTEM",
+              "BALCAO"
+            ]
+          },
+          "nomeCliente": {
+            "type": "string"
+          },
+          "cpfCliente": {
+            "type": "string"
+          },
+          "pickup": {
+            "type": "boolean"
+          },
+          "horarioPedido": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "horarioPreparo": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "consentimentoFidelizacao": {
+            "type": "boolean"
+          },
+          "pontosDesejados": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "itens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemPedidoRequest"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "canal",
+          "horarioPedido",
+          "itens"
+        ]
+      },
+      "ItemPedidoRequest": {
+        "type": "object",
+        "properties": {
+          "pratoId": {
+            "type": "string"
+          },
+          "quantidade": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": [
+          "pratoId"
+        ]
+      },
+      "CriarPedidoResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "PagamentoRequest": {
+        "type": "object",
+        "properties": {
+          "pedidoId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "formaPagamento": {
+            "type": "string",
+            "enum": [
+              "PIX",
+              "CARTAO_CREDITO",
+              "CARTAO_DEBITO"
+            ]
+          },
+          "token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "formaPagamento",
+          "pedidoId"
+        ]
+      },
+      "PagamentoSincronoResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "statusPagamento": {
+            "type": "string",
+            "enum": [
+              "PENDENTE",
+              "APROVADO",
+              "RECUSADO",
+              "ERRO"
+            ]
+          },
+          "statusPedido": {
+            "type": "string",
+            "enum": [
+              "PAGAMENTO_PENDENTE",
+              "AGUARDANDO_PREPARO",
+              "EM_PREPARO",
+              "PRONTO",
+              "CONCLUIDO",
+              "CANCELADO"
+            ]
+          },
+          "motivoRecusa": {
+            "type": "string"
+          }
+        }
+      },
+      "PagamentoAssincronoResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "statusPagamento": {
+            "type": "string",
+            "enum": [
+              "PENDENTE",
+              "APROVADO",
+              "RECUSADO",
+              "ERRO"
+            ]
+          },
+          "qrCode": {
+            "type": "string"
+          },
+          "qrCodeValidoAte": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CadastroClienteRequest": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cpf": {
+            "type": "string"
+          },
+          "telefone": {
+            "type": "string",
+            "minLength": 1
+          },
+          "endereco": {
+            "type": "string",
+            "minLength": 1
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "senha": {
+            "type": "string"
+          },
+          "dataNascimento": {
+            "type": "string",
+            "format": "date"
+          },
+          "versaoAceiteTermos": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "dataNascimento",
+          "endereco",
+          "nome",
+          "telefone",
+          "versaoAceiteTermos"
+        ]
+      },
+      "CadastroResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "senha": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "senha"
+        ]
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          },
+          "tokenType": {
+            "type": "string"
+          },
+          "accessTokenExpiresIn": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "refreshTokenExpiresIn": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "CadastroFuncionarioRequest": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "minLength": 1
+          },
+          "unidadeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "telefone": {
+            "type": "string",
+            "minLength": 1
+          },
+          "endereco": {
+            "type": "string",
+            "minLength": 1
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "senha": {
+            "type": "string"
+          },
+          "dataNascimento": {
+            "type": "string",
+            "format": "date"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "CLIENTE",
+              "OPERADOR",
+              "COZINHA",
+              "GERENTE",
+              "ADMINISTRADOR"
+            ]
+          }
+        },
+        "required": [
+          "dataNascimento",
+          "endereco",
+          "nome",
+          "role",
+          "telefone",
+          "unidadeId"
+        ]
+      },
+      "AvancarStatusPedidoResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "Pagina": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {}
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalItems": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ItemPedidoResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "pratoId": {
+            "type": "string"
+          },
+          "quantidade": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "precoUnitario": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PedidoResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "unidadeId": {
+            "type": "string"
+          },
+          "clienteId": {
+            "type": "string"
+          },
+          "clienteFidelidadeId": {
+            "type": "string"
+          },
+          "funcionarioId": {
+            "type": "string"
+          },
+          "nomeCliente": {
+            "type": "string"
+          },
+          "canal": {
+            "type": "string",
+            "enum": [
+              "APP",
+              "TOTEM",
+              "BALCAO"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PAGAMENTO_PENDENTE",
+              "AGUARDANDO_PREPARO",
+              "EM_PREPARO",
+              "PRONTO",
+              "CONCLUIDO",
+              "CANCELADO"
+            ]
+          },
+          "pickup": {
+            "type": "boolean"
+          },
+          "horarioPedido": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "horarioPreparo": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "consentimentoFidelizacao": {
+            "type": "boolean"
+          },
+          "itens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemPedidoResponse"
+            }
+          },
+          "valorTotal": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "valorDescontoPromocao": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "valorDescontoPontos": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "valorFinal": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ExtratoFidelidadeResponse": {
+        "type": "object",
+        "properties": {
+          "saldoPontos": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "movimentacoes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MovimentacaoResponse"
+            }
+          }
+        }
+      },
+      "MovimentacaoResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "pedidoId": {
+            "type": "string"
+          },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "ACUMULO",
+              "RESGATE",
+              "EXPIRACAO"
+            ]
+          },
+          "pontos": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "dataContabilizacao": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dataExpiracao": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "Token JWT obtido em /auth/login.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
